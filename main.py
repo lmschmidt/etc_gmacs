@@ -49,6 +49,19 @@ widget_channels = CheckboxButtonGroup(labels=stc.channels, active=[0,1], name=st
 
 widget_header = Div(text='<h1>'+stc.header1+'</h1><h3>'+stc.header2+'</h3>'+'<hr/>',width=1150,height=100)
 
+# group widgets for initialization (not layout)
+widgets_with_active = [widget_telescope_size,widget_object_type,widget_mag_sys,
+                        widget_grating,widget_moon,widget_binning,widget_withnoise,widget_channels]
+widgets_with_values = [widget_star_type,widget_galaxy_type,widget_filter,widget_mag,
+                        widget_redshift,widget_seeing,widget_slit,widget_time]
+#widgets_coalesced = np.append(np.append(np.append(widgets_with_active,widgets_with_values),widget_wavelength),widget_tabs)
+
+
+# link callbacks
+
+#for i,widge in enumerate(widgets_with_active):
+#    print(widge.name)
+#    widge.on_change('active', lambda attr, old, new: update_data(widge.name))
 
 # set up callbacks
 
@@ -57,22 +70,30 @@ widget_header = Div(text='<h1>'+stc.header1+'</h1><h3>'+stc.header2+'</h3>'+'<hr
 
 #text.on_change('value', update_title)
 
-def update_data(attrname, old, new):
+def update_data_value(attrname, old, new):
+    print(attrname, old, new)
 
+def update_data_active(attrname, old, new):
+    print(attrname, old, new)
     # Get the current slider values
-    a = amplitude.value
-    b = offset.value
-    w = phase.value
-    k = freq.value
+#    a = amplitude.value
+#    b = offset.value
+#    w = phase.value
+#    k = freq.value
+#
+#    # Generate the new curve
+#    x = np.linspace(0, 4*np.pi, N)
+#    y = a*np.sin(k*x + w) + b
+#
+#    source.data = dict(x=x, y=y)
+for i,widge in enumerate(widgets_with_values):
+    print(widge.name)
+    widge.on_change('value', update_data_value)
 
-    # Generate the new curve
-    x = np.linspace(0, 4*np.pi, N)
-    y = a*np.sin(k*x + w) + b
+for i,widge in enumerate(widgets_with_active):
+    print(widge.name)
+    widge.on_change('active', update_data_active)
 
-    source.data = dict(x=x, y=y)
-
-for w in [offset, amplitude, phase, freq]:
-    w.on_change('value', update_data)
 
 def update_bkh(caller):
     plot_x,plot_yb,plot_yr = sess.update(caller)
