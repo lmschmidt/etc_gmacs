@@ -25,7 +25,7 @@ gly_red = glyphs.Line(x='xr',y='yr',line_color='red')
 p0 = figure(plot_width=dfs.plot_dims[0], plot_height=dfs.plot_dims[1],sizing_mode=dfs.plot_sizing_mode,
             x_axis_label=stc.plot_labels[0][1],y_axis_label=stc.plot_labels[0][2])
 
-
+## !!!!need to impliment https://groups.google.com/a/continuum.io/forum/#!topic/bokeh/nwkfeLbvgUg !!!
 
 # set up widgets
 widget_telescope_size = RadioButtonGroup(labels=stc.telescope_sizes,active=0,name=stc.widget_names[0])
@@ -33,7 +33,7 @@ widget_object_type = RadioButtonGroup(labels=stc.object_types,active=0,name=stc.
 widget_star_type = Dropdown(default_value=stc.star_types_tup[4][0],label=stc.widget_headers[2],menu=stc.star_types_tup,name=stc.widget_names[2])
 widget_galaxy_type = Dropdown(default_value=stc.galaxy_types_tup[0][0],label=stc.widget_headers[3],menu=stc.galaxy_types_tup,name=stc.widget_names[3])
 widget_mag_sys = RadioButtonGroup(labels=stc.mag_sys_opts,active=1,name=stc.widget_names[4])
-widget_mag = Slider(start=(0),end=(30),value=(25),step=(0.1),title=stc.widget_headers[5],name=stc.widget_names[5])
+widget_mag = Slider(start=(0),end=(30),value=(25),step=(0.1),title=stc.widget_headers[5],name=stc.widget_names[5], callback_policy="mouseup", callback_throttle=2000)
 widget_filter = Dropdown(default_value=stc.filters_tup[7][0],label=stc.widget_headers[6],menu=stc.filters_tup,name=stc.widget_names[6])
 widget_grating = RadioButtonGroup(labels=stc.grating_opts,active=0,name=stc.widget_names[7])
 widget_moon = RadioButtonGroup(labels=stc.moon_opts,active=0,name=stc.widget_names[8])
