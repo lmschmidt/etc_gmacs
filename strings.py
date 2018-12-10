@@ -64,4 +64,4 @@ star_types = [name[:-4] for name in etpaths.stellar_files]
 galaxy_types = etpaths.galaxy_files  # these files lack suffixes
 star_types_tup = [(i, i) for i in star_types]  # unless there's a need to distinguish...
 galaxy_types_tup = [(i, i) for i in galaxy_types]
-filters_tup = [(filter_opts[i], etpaths.filter_files[i]) for i in range(len(filter_opts))]
+filters_tup = [(etpaths.filter_files[i], filter_opts[i]) for i in range(len(filter_opts))]

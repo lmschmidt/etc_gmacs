@@ -6,7 +6,7 @@ from bokeh.plotting import figure
 from bokeh.layouts import widgetbox, column, layout  # , row
 from bokeh.models import ColumnDataSource, glyphs
 from bokeh.io import curdoc
-from bokeh.models.widgets import Dropdown, RadioButtonGroup, CheckboxButtonGroup, Slider, RangeSlider, Div  # Tabs, Panel, Toggle
+from bokeh.models.widgets import Dropdown, RadioButtonGroup, CheckboxButtonGroup, Slider, RangeSlider, Div, Select, Button  # Tabs, Panel, Toggle
 # from bokeh.embed import components  # for loading stuff,  todo
 
 # import slim as etslim  # reduced python package for gui versions
@@ -30,11 +30,11 @@ p0 = figure(plot_width=dfs.plot_dims[0],  plot_height=dfs.plot_dims[1], sizing_m
 # set up widgets
 widget_telescope_size = RadioButtonGroup(labels=stc.telescope_sizes, active=0, name=stc.widget_names[0])
 widget_object_type = RadioButtonGroup(labels=stc.object_types, active=0, name=stc.widget_names[1])
-widget_star_type = Dropdown(default_value=stc.star_types_tup[4][0], label=stc.widget_headers[2], menu=stc.star_types_tup, name=stc.widget_names[2])
-widget_galaxy_type = Dropdown(default_value=stc.galaxy_types_tup[0][0], label=stc.widget_headers[3], menu=stc.galaxy_types_tup, name=stc.widget_names[3])
+widget_star_type = Select(value=stc.star_types_tup[4][0], title=stc.widget_headers[2], options=stc.star_types_tup, name=stc.widget_names[2])
+widget_galaxy_type = Select(value=stc.galaxy_types_tup[0][0], title=stc.widget_headers[3], options=stc.galaxy_types_tup, name=stc.widget_names[3])
 widget_mag_sys = RadioButtonGroup(labels=stc.mag_sys_opts, active=1, name=stc.widget_names[4])
-widget_mag = Slider(start=(0), end=(30), value=(25), step=(0.1), title=stc.widget_headers[5], name=stc.widget_names[5],  callback_policy="mouseup",  callback_throttle=2000)
-widget_filter = Dropdown(default_value=stc.filters_tup[7][0], label=stc.widget_headers[6], menu=stc.filters_tup, name=stc.widget_names[6])
+widget_mag = Slider(start=(0), end=(30), value=(25), step=(0.1), title=stc.widget_headers[5], name=stc.widget_names[5],  callback_policy="mouseup")
+widget_filter = Select(value=stc.filters_tup[7][0], title=stc.widget_headers[6], options=stc.filters_tup, name=stc.widget_names[6])
 widget_grating = RadioButtonGroup(labels=stc.grating_opts, active=0, name=stc.widget_names[7])
 widget_moon = RadioButtonGroup(labels=stc.moon_opts, active=0, name=stc.widget_names[8])
 widget_binning = RadioButtonGroup(labels=stc.bin_opts, active=1, name=stc.widget_names[9])
@@ -53,9 +53,13 @@ widget_header = Div(text='<h1>'+stc.header1+'</h1><h3>'+stc.header2+'</h3>'+'<hr
 widgets_with_active = [widget_telescope_size, widget_object_type, widget_mag_sys,
                        widget_grating, widget_moon, widget_binning, widget_withnoise, widget_channels]
 widgets_with_values = [widget_star_type, widget_galaxy_type, widget_filter, widget_mag,
-                       widget_redshift, widget_seeing, widget_slit, widget_time]
-# widgets_coalesced = np.append(np.append(np.append(widgets_with_active, widgets_with_values), widget_wavelength), widget_tabs)
+                       widget_redshift, widget_seeing, widget_slit, widget_time, widget_wavelength]
+all_widgets = widgets_with_active + widgets_with_values
 
+# dict to hold all etc input values
+etc_inputs = {key: None for key in all_widgets}
+
+# Set up callbacks for sliders to only call on mouseup to throttle calling main ETC code see https://stackoverflow.com/questions/38375961/throttling-in-bokeh-application
 
 # link callbacks
 
@@ -71,11 +75,14 @@ widgets_with_values = [widget_star_type, widget_galaxy_type, widget_filter, widg
 # text.on_change('value',  update_title)
 
 def update_data_value(attrname,  old,  new):
-    print(attrname,  old,  new)
+    # etc_inputs.attrname = new
+    print(attrname, old, new)
 
 
 def update_data_active(attrname,  old,  new):
-    print(attrname,  old,  new)
+    # etc_inputs.attrname = new
+    print(attrname, old, new)
+    
 
 
 #    # Get the current slider values
@@ -92,13 +99,14 @@ def update_data_active(attrname,  old,  new):
 
 
 for i, widge in enumerate(widgets_with_values):
-    print(widge.name)
-    widge.on_change('value',  update_data_value)
+    print(i, widge.name)
+    #etc_inputs.widge = widge.value
+    widge.on_change("value",  update_data_value)
 
 
 for i, widge in enumerate(widgets_with_active):
-    print(widge.name)
-    widge.on_change('active',  update_data_active)
+    #etc_inputs.widge = widge.value
+    widge.on_change("active",  update_data_active)
 
 
 def update_bkh(caller):
@@ -132,7 +140,7 @@ widget_group_three = widgetbox(children=[widget_grating, widget_redshift, widget
 widgets = column(children=[widget_group_one, widget_group_two, widget_group_three], width=dfs.toolbar_width)
 
 curdoc().add_root(layout([[widget_header],  [widgets, p0]],  sizing_mode=dfs.plot_sizing_mode))
-curdoc().title = "GMACS ETC"
+curdoc().title = "GMACS ETC 2.0"
 
 # ################################################################################################
 # ################################################################################################
