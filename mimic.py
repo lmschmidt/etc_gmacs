@@ -60,7 +60,7 @@ moon_days_keys = [0, 3, 7, 10, 14]
 telescope_mode_keys = [0, 4, 'first', 'first light', 1, 7, 'full', 'full size']
 selected_filter = filterfiles[filter_index]
 
-''' input handlding '''
+''' input handling '''
 
 if isinstance(object_type, str):
     object_type = object_type.lower()

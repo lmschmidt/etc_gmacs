@@ -27,9 +27,8 @@ widget_headers = ["Telescope Mode",  # 0
                   "Slit Width [arcsec]",  # 12
                   "Exposure Time [s]",  # 13
                   "Spectral Range [\u212b]",  # 14
-                  "Include Noise",  # 15
-                  "Active Channels",  # 16
-                  "Plot Type"]  # 17
+                  "Active Channels",  # 15
+                  "Plot Type"]  # 16
 
 widget_names = ['widget_telescope',
                 'widget_object_type',
@@ -46,7 +45,6 @@ widget_names = ['widget_telescope',
                 'widget_slit',
                 'widget_time',
                 'widget_wavelength',
-                'widget_withnoise',
                 'widget_channels',
                 'widget_plot']  # matched w/ header nums
 

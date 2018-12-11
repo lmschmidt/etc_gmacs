@@ -44,10 +44,9 @@ widget_slit = Slider(start=(0.25), end=(2.0), value=(0.7), step=(0.05), title=st
 widget_time = Slider(start=(0), end=(21600), value=(2600), step=(10), title=stc.widget_headers[13], name=stc.widget_names[13])
 widget_wavelength = RangeSlider(start=dfs.wavelength_limits[0],  end=dfs.wavelength_limits[1],
                                 value=((dfs.wavelength_limits[0]), (dfs.wavelength_limits[1])), step=(10), title=stc.widget_headers[14], name=stc.widget_names[14])
-widget_withnoise = RadioButtonGroup(labels=stc.noise_opts, active=1, name=stc.widget_names[15])  # Toggle(label=stc.widget_names[15],  button_type='success')
-widget_channels = CheckboxButtonGroup(labels=stc.channels,  active=[0, 1],  name=stc.widget_names[16])
+widget_channels = CheckboxButtonGroup(labels=stc.channels,  active=[0, 1],  name=stc.widget_names[15])
 
-widget_plot = Select(value=stc.plot_labels[0][0], title=stc.widget_headers[17], options=[item[0] for item in stc.plot_labels], name=stc.widget_names[17])
+widget_plot = Select(value=stc.plot_labels[0][0], title=stc.widget_headers[16], options=[item[0] for item in stc.plot_labels], name=stc.widget_names[16])
 
 widget_update = Button(label="Update", button_type="success")
 
@@ -55,13 +54,13 @@ widget_header = Div(text='<h1>'+stc.header1+'</h1><h3>'+stc.header2+'</h3>'+'<hr
 
 # group widgets for initialization (not layout)
 widgets_with_active = [widget_telescope_size, widget_object_type, widget_mag_sys,
-                       widget_grating, widget_moon, widget_binning, widget_withnoise, widget_channels]
+                       widget_grating, widget_moon, widget_binning, widget_channels]
 widgets_with_values = [widget_star_type, widget_galaxy_type, widget_filter, widget_mag,
                        widget_redshift, widget_seeing, widget_slit, widget_time, widget_wavelength, widget_plot]
 all_widgets = widgets_with_active + widgets_with_values
 
 # dict to hold all etc input values
-etc_inputs = {key: None for key in all_widgets}
+etc_inputs = {key: None for key in stc.widget_names}
 
 # Set up callbacks for sliders to only call on mouseup to throttle calling main ETC code see https://stackoverflow.com/questions/38375961/throttling-in-bokeh-application
 
@@ -78,16 +77,55 @@ etc_inputs = {key: None for key in all_widgets}
 
 # text.on_change('value',  update_title)
 
-def update_data_value(attrname,  old,  new):
-    # etc_inputs.attrname = new
-    print(attrname, old, new)
+# def update_data_value(attrname,  old,  new):
+#     # etc_inputs.attrname = new
+#     print(attrname, old, new)
+# 
+# 
+# def update_data_active(attrname,  old,  new):
+#     # etc_inputs.attrname = new
+#     print(attrname, old, new)
 
+def update_etc_inputs(attr, old, new):
+    # update dictionary of ETC inputs
+    print('update ETC dict')
+    print(etc_inputs, '\n')
+    for i, widge in enumerate(widgets_with_values):
+        print(i, widge.name)
+        etc_inputs[widge.name] = widge.value
 
-def update_data_active(attrname,  old,  new):
-    # etc_inputs.attrname = new
-    print(attrname, old, new)
+    for i, widge in enumerate(widgets_with_active):
+        print(i, widge.name)
+        etc_inputs[widge.name] = widge.active
+
+    print(etc_inputs)
     
+def update_figure():
+    # to populate dictionary on first run if no values are changed, toggle triggers dictionary update
+    if None in etc_inputs.values():
+        widget_telescope_size.active = True
+        widget_telescope_size.active = False
 
+    print('updating figure \n', etc_inputs)
+    # plot_x, plot_yb, plot_yr = sess.update(caller)
+    # if (widget_channels.active == [0]):
+    #     cds_blue.data['xb'] = plot_x
+    #     cds_blue.data['yb'] = plot_yb
+    #     gly_blue.line_alpha = 0.5
+    #     gly_red.line_alpha = 0.
+    # elif (widget_channels.active == [1]):
+    #     cds_red.data['xr'] = plot_x
+    #     cds_red.data['yr'] = plot_yr
+    #     gly_blue.line_alpha = 0.
+    #     gly_red.line_alpha = 0.5
+    # else:  # crashless catch-all
+    #     gly_blue.line_alpha = 0.5
+    #     gly_red.line_alpha = 0.5
+    #     widget_channels.active = [0, 1]
+    #     cds_blue.data['xb'] = plot_x
+    #     cds_blue.data['yb'] = plot_yb
+    #     cds_red.data['xr'] = plot_x
+    #     cds_red.data['yr'] = plot_yr
 
 #    # Get the current slider values
 #    a = amplitude.value
@@ -105,42 +143,25 @@ def update_data_active(attrname,  old,  new):
 for i, widge in enumerate(widgets_with_values):
     print(i, widge.name)
     #etc_inputs.widge = widge.value
-    widge.on_change("value",  update_data_value)
+    widge.on_change("value", update_etc_inputs)
 
 
 for i, widge in enumerate(widgets_with_active):
     #etc_inputs.widge = widge.value
-    widge.on_change("active",  update_data_active)
+    widge.on_change("active", update_etc_inputs)
+
+widget_update.on_click(update_figure)
 
 
-def update_bkh(caller):
-    plot_x, plot_yb, plot_yr = sess.update(caller)
-    if (widget_channels.active == [0]):
-        cds_blue.data['xb'] = plot_x
-        cds_blue.data['yb'] = plot_yb
-        gly_blue.line_alpha = 0.5
-        gly_red.line_alpha = 0.
-    elif (widget_channels.active == [1]):
-        cds_red.data['xr'] = plot_x
-        cds_red.data['yr'] = plot_yr
-        gly_blue.line_alpha = 0.
-        gly_red.line_alpha = 0.5
-    else:  # crashless catch-all
-        gly_blue.line_alpha = 0.5
-        gly_red.line_alpha = 0.5
-        widget_channels.active = [0, 1]
-        cds_blue.data['xb'] = plot_x
-        cds_blue.data['yb'] = plot_yb
-        cds_red.data['xr'] = plot_x
-        cds_red.data['yr'] = plot_yr
+
 
 
 # Set up layouts and add to document
 
 widget_group_one = widgetbox(children=[widget_telescope_size, widget_object_type, widget_star_type, widget_galaxy_type])
-widget_group_two = widgetbox(children=[widget_mag, widget_filter, widget_mag_sys])
+widget_group_two = widgetbox(children=[widget_filter, widget_mag, widget_mag_sys])
 widget_group_three = widgetbox(children=[widget_grating, widget_redshift, widget_time, widget_seeing, widget_slit, widget_moon, widget_wavelength,
-                               widget_binning, widget_withnoise, widget_channels, widget_plot, widget_update], sizing_mode=dfs.plot_sizing_mode)
+                               widget_binning, widget_channels, widget_plot, widget_update], sizing_mode=dfs.plot_sizing_mode)
 widget_group_four = column(children=[widget_header, p0], sizing_mode=dfs.plot_sizing_mode)
 widgets = column(children=[widget_group_one, widget_group_two, widget_group_three], width=dfs.toolbar_width)
 
