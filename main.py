@@ -3,7 +3,7 @@
 # import numpy as np
 
 from bokeh.plotting import figure
-from bokeh.layouts import widgetbox, column, layout  # , row
+from bokeh.layouts import widgetbox, column, layout, gridplot  # , row
 from bokeh.models import ColumnDataSource, glyphs
 from bokeh.io import curdoc
 from bokeh.models.widgets import Dropdown, RadioButtonGroup, CheckboxButtonGroup, Slider, RangeSlider, Div, Select, Button  # Tabs, Panel, Toggle
@@ -47,13 +47,17 @@ widget_wavelength = RangeSlider(start=dfs.wavelength_limits[0],  end=dfs.wavelen
 widget_withnoise = RadioButtonGroup(labels=stc.noise_opts, active=1, name=stc.widget_names[15])  # Toggle(label=stc.widget_names[15],  button_type='success')
 widget_channels = CheckboxButtonGroup(labels=stc.channels,  active=[0, 1],  name=stc.widget_names[16])
 
+widget_plot = Select(value=stc.plot_labels[0][0], title=stc.widget_headers[17], options=[item[0] for item in stc.plot_labels], name=stc.widget_names[17])
+
+widget_update = Button(label="Update", button_type="success")
+
 widget_header = Div(text='<h1>'+stc.header1+'</h1><h3>'+stc.header2+'</h3>'+'<hr/>', width=1150, height=100)
 
 # group widgets for initialization (not layout)
 widgets_with_active = [widget_telescope_size, widget_object_type, widget_mag_sys,
                        widget_grating, widget_moon, widget_binning, widget_withnoise, widget_channels]
 widgets_with_values = [widget_star_type, widget_galaxy_type, widget_filter, widget_mag,
-                       widget_redshift, widget_seeing, widget_slit, widget_time, widget_wavelength]
+                       widget_redshift, widget_seeing, widget_slit, widget_time, widget_wavelength, widget_plot]
 all_widgets = widgets_with_active + widgets_with_values
 
 # dict to hold all etc input values
@@ -136,10 +140,11 @@ def update_bkh(caller):
 widget_group_one = widgetbox(children=[widget_telescope_size, widget_object_type, widget_star_type, widget_galaxy_type])
 widget_group_two = widgetbox(children=[widget_mag, widget_filter, widget_mag_sys])
 widget_group_three = widgetbox(children=[widget_grating, widget_redshift, widget_time, widget_seeing, widget_slit, widget_moon, widget_wavelength,
-                               widget_binning, widget_withnoise, widget_channels], sizing_mode=dfs.plot_sizing_mode)
+                               widget_binning, widget_withnoise, widget_channels, widget_plot, widget_update], sizing_mode=dfs.plot_sizing_mode)
+widget_group_four = column(children=[widget_header, p0], sizing_mode=dfs.plot_sizing_mode)
 widgets = column(children=[widget_group_one, widget_group_two, widget_group_three], width=dfs.toolbar_width)
 
-curdoc().add_root(layout([[widget_header],  [widgets, p0]],  sizing_mode=dfs.plot_sizing_mode))
+curdoc().add_root(layout([[widgets, widget_group_four]],  sizing_mode=dfs.plot_sizing_mode))
 curdoc().title = "GMACS ETC 2.0"
 
 # ################################################################################################

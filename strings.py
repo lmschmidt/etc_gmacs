@@ -5,6 +5,7 @@ import paths as etpaths
 # title,  x,  y
 plot_labels = [('Signal-to-Noise Ratio', 'Wavelength [\u212b]', 'SNR px\u207b\u00b9'),
                ('Observed Spectrum', 'Wavelength [\u212b]', 'Counts px\u207b\u00b9'),
+               ('Observed Spectrum + Noise', 'Wavelength [\u212b]', 'Counts px\u207b\u00b9'),
                ('Observed Sky Background', 'Wavelength [\u212b]', 'Counts px\u207b\u00b9'),
                ('Dichroic Throughput', 'Wavelength [\u212b]', 'Throughput'),
                ('Grating Throughput', 'Wavelength [\u212b]', 'Throughput'),
@@ -27,7 +28,8 @@ widget_headers = ["Telescope Mode",  # 0
                   "Exposure Time [s]",  # 13
                   "Spectral Range [\u212b]",  # 14
                   "Include Noise",  # 15
-                  "Active Channels"]  # 16
+                  "Active Channels",  # 16
+                  "Plot Type"]  # 17
 
 widget_names = ['widget_telescope',
                 'widget_object_type',
@@ -45,12 +47,13 @@ widget_names = ['widget_telescope',
                 'widget_time',
                 'widget_wavelength',
                 'widget_withnoise',
-                'widget_channels']  # matched w/ header nums
+                'widget_channels',
+                'widget_plot']  # matched w/ header nums
 
 telescope_sizes = ["First light", "Full Size"]
 object_types = ["Stellar", "Galactic"]
 
-header1 = 'GMACS : Exposure Time Calculator'
+header1 = 'GMACS : Exposure Time Calculator v2.0'
 header2 = 'Munnerlyn Astronomical Instrumentation Lab'
 mag_sys_opts = ['Vega', 'AB']
 grating_opts = ['Low Resolution', 'High Resolution']
@@ -58,7 +61,7 @@ filter_opts = [name[:-4] for name in etpaths.filter_files]
 moon_opts = ['0', '3', '7', '10', '14']
 bin_opts = ['1x1', '2x2', '3x3', '4x4']
 noise_opts = ['With Noise', 'Without Noise']
-channels = ['Blue', 'Red']
+channels = ['Blue Channel', 'Red Channel']
 
 star_types = [name[:-4] for name in etpaths.stellar_files]
 galaxy_types = etpaths.galaxy_files  # these files lack suffixes
