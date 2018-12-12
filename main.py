@@ -4,7 +4,7 @@
 
 from bokeh.plotting import figure
 from bokeh.layouts import widgetbox, column, layout, gridplot  # , row
-from bokeh.models import ColumnDataSource, glyphs
+from bokeh.models import ColumnDataSource, glyphs, Div
 from bokeh.io import curdoc
 from bokeh.models.widgets import Dropdown, RadioButtonGroup, CheckboxButtonGroup, Slider, RangeSlider, Div, Select, Button  # Tabs, Panel, Toggle
 # from bokeh.embed import components  # for loading stuff,  todo
@@ -12,6 +12,7 @@ from bokeh.models.widgets import Dropdown, RadioButtonGroup, CheckboxButtonGroup
 # import slim as etslim  # reduced python package for gui versions
 import strings as stc
 import defaults as dfs
+import etc as etcalc
 
 # set up data
 # create glyphs and their sources
@@ -49,6 +50,8 @@ widget_channels = CheckboxButtonGroup(labels=stc.channels,  active=[0, 1],  name
 widget_plot = Select(value=stc.plot_labels[0][0], title=stc.widget_headers[16], options=[item[0] for item in stc.plot_labels], name=stc.widget_names[16])
 
 widget_update = Button(label="Update", button_type="success")
+
+widget_text = Div(text="test text for display on the page")
 
 widget_header = Div(text='<h1>'+stc.header1+'</h1><h3>'+stc.header2+'</h3>'+'<hr/>', width=1150, height=100)
 
@@ -88,14 +91,14 @@ etc_inputs = {key: None for key in stc.widget_names}
 
 def update_etc_inputs(attr, old, new):
     # update dictionary of ETC inputs
-    print('update ETC dict')
-    print(etc_inputs, '\n')
+    print('updating ETC dict\n')
+    # print(etc_inputs, '\n')
     for i, widge in enumerate(widgets_with_values):
-        print(i, widge.name)
+        # print(i, widge.name)
         etc_inputs[widge.name] = widge.value
 
     for i, widge in enumerate(widgets_with_active):
-        print(i, widge.name)
+        # print(i, widge.name)
         etc_inputs[widge.name] = widge.active
 
     print(etc_inputs)
@@ -107,6 +110,10 @@ def update_figure():
         widget_telescope_size.active = False
 
     print('updating figure \n', etc_inputs)
+    results = etcalc.recalculate(etc_inputs)
+    print(results)
+    widget_text.update(text=results)
+    
     # plot_x, plot_yb, plot_yr = sess.update(caller)
     # if (widget_channels.active == [0]):
     #     cds_blue.data['xb'] = plot_x
@@ -141,13 +148,13 @@ def update_figure():
 
 
 for i, widge in enumerate(widgets_with_values):
-    print(i, widge.name)
-    #etc_inputs.widge = widge.value
+    # print(i, widge.name)
+    # etc_inputs.widge = widge.value
     widge.on_change("value", update_etc_inputs)
 
 
 for i, widge in enumerate(widgets_with_active):
-    #etc_inputs.widge = widge.value
+    # etc_inputs.widge = widge.value
     widge.on_change("active", update_etc_inputs)
 
 widget_update.on_click(update_figure)
@@ -162,7 +169,7 @@ widget_group_one = widgetbox(children=[widget_telescope_size, widget_object_type
 widget_group_two = widgetbox(children=[widget_filter, widget_mag, widget_mag_sys])
 widget_group_three = widgetbox(children=[widget_grating, widget_redshift, widget_time, widget_seeing, widget_slit, widget_moon, widget_wavelength,
                                widget_binning, widget_channels, widget_plot, widget_update], sizing_mode=dfs.plot_sizing_mode)
-widget_group_four = column(children=[widget_header, p0], sizing_mode=dfs.plot_sizing_mode)
+widget_group_four = column(children=[widget_header, p0, widget_text], sizing_mode=dfs.plot_sizing_mode)
 widgets = column(children=[widget_group_one, widget_group_two, widget_group_three], width=dfs.toolbar_width)
 
 curdoc().add_root(layout([[widgets, widget_group_four]],  sizing_mode=dfs.plot_sizing_mode))

@@ -5,6 +5,7 @@ import numpy as np
 # import pandas as pd
 # import defaults as dfs
 import paths as etpaths
+from pathlib import Path
 # from bokeh.models import ColumnDataSource
 
 # jsonify_data = lambda data, filename: json.dump(data, filename) # for an optimization in later versions
@@ -39,16 +40,16 @@ k5v_x, k5v_y = np.loadtxt(etpaths.stellar_path / etpaths.stellar_files[9], useco
 m0v_x, m0v_y = np.loadtxt(etpaths.stellar_path / etpaths.stellar_files[10], usecols=(0, 1), unpack=True)
 m5v_x, m5v_y = np.loadtxt(etpaths.stellar_path / etpaths.stellar_files[11], usecols=(0, 1), unpack=True)
 
-filter_besb_x, filter_besb_y = np.loadtxt(etpaths.filter_path / etpaths.filter_files[0], usecols=(0, 1), unpack=True, delimiter=', ')
-filter_besi_x, filter_besi_y = np.loadtxt(etpaths.filter_path / etpaths.filter_files[1], usecols=(0, 1), unpack=True, delimiter=', ')
-filter_besr_x, filter_besr_y = np.loadtxt(etpaths.filter_path / etpaths.filter_files[2], usecols=(0, 1), unpack=True, delimiter=', ')
-filter_besu_x, filter_besu_y = np.loadtxt(etpaths.filter_path / etpaths.filter_files[3], usecols=(0, 1), unpack=True, delimiter=', ')
-filter_besv_x, filter_besv_y = np.loadtxt(etpaths.filter_path / etpaths.filter_files[4], usecols=(0, 1), unpack=True, delimiter=', ')
-filter_u_x, filter_u_y = np.loadtxt(etpaths.filter_path / etpaths.filter_files[5], usecols=(0, 1), unpack=True, delimiter=', ')
-filter_g_x, filter_g_y = np.loadtxt(etpaths.filter_path / etpaths.filter_files[6], usecols=(0, 1), unpack=True, delimiter=', ')
-filter_r_x, filter_r_y = np.loadtxt(etpaths.filter_path / etpaths.filter_files[7], usecols=(0, 1), unpack=True, delimiter=', ')
-filter_i_x, filter_i_y = np.loadtxt(etpaths.filter_path / etpaths.filter_files[8], usecols=(0, 1), unpack=True, delimiter=', ')
-filter_z_x, filter_z_y = np.loadtxt(etpaths.filter_path / etpaths.filter_files[9], usecols=(0, 1), unpack=True, delimiter=', ')
+filter_besb_x, filter_besb_y = np.loadtxt(etpaths.filter_path / etpaths.filter_files[0], usecols=(0, 1), unpack=True, delimiter=',')
+filter_besi_x, filter_besi_y = np.loadtxt(etpaths.filter_path / etpaths.filter_files[1], usecols=(0, 1), unpack=True, delimiter=',')
+filter_besr_x, filter_besr_y = np.loadtxt(etpaths.filter_path / etpaths.filter_files[2], usecols=(0, 1), unpack=True, delimiter=',')
+filter_besu_x, filter_besu_y = np.loadtxt(etpaths.filter_path / etpaths.filter_files[3], usecols=(0, 1), unpack=True, delimiter=',')
+filter_besv_x, filter_besv_y = np.loadtxt(etpaths.filter_path / etpaths.filter_files[4], usecols=(0, 1), unpack=True, delimiter=',')
+filter_u_x, filter_u_y = np.loadtxt(etpaths.filter_path / etpaths.filter_files[5], usecols=(0, 1), unpack=True, delimiter=',')
+filter_g_x, filter_g_y = np.loadtxt(etpaths.filter_path / etpaths.filter_files[6], usecols=(0, 1), unpack=True, delimiter=',')
+filter_r_x, filter_r_y = np.loadtxt(etpaths.filter_path / etpaths.filter_files[7], usecols=(0, 1), unpack=True, delimiter=',')
+filter_i_x, filter_i_y = np.loadtxt(etpaths.filter_path / etpaths.filter_files[8], usecols=(0, 1), unpack=True, delimiter=',')
+filter_z_x, filter_z_y = np.loadtxt(etpaths.filter_path / etpaths.filter_files[9], usecols=(0, 1), unpack=True, delimiter=',')
 filter_photonux_x, filter_photonux_y = np.loadtxt(etpaths.filter_path / etpaths.filter_files[10], usecols=(0, 1), unpack=True)
 filter_photonb_x, filter_photonb_y = np.loadtxt(etpaths.filter_path / etpaths.filter_files[11], usecols=(0, 1), unpack=True)
 filter_photonv_x, filter_photonv_y = np.loadtxt(etpaths.filter_path / etpaths.filter_files[12], usecols=(0, 1), unpack=True)
@@ -69,10 +70,10 @@ ccd_blue_x, ccd_blue_y = np.loadtxt(etpaths.ccd_path[1], usecols=(0, 3), unpack=
 
 _dichroic_x, dichroic_y1, dichroic_y2 = np.loadtxt(etpaths.dichroic_path, usecols=(0, 1, 2), unpack=True)
 dichroic_x = _dichroic_x * 10
-atmo_ext_x, atmo_ext_y = np.loadtxt(etpaths.atmo_ext_path, usecols=(0, 1), unpack=True, delimiter=', ')
+atmo_ext_x, atmo_ext_y = np.loadtxt(etpaths.atmo_ext_path, usecols=(0, 1), unpack=True, delimiter=',')
 
 mirror_file = np.fliplr(np.loadtxt(etpaths.mirror_file, usecols=(0, 1), unpack=True, delimiter=' '))
-vega_file = np.loadtxt(etpaths.vega_file, usecols=(0, 1), unpack=True, delimiter=', ')
+vega_file = np.loadtxt(etpaths.vega_file, usecols=(0, 1), unpack=True, delimiter=',')
 
 ''' coalesced data '''
 
