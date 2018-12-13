@@ -26,9 +26,11 @@ class session:
         input_dict = dict()
         for i in range(len(args)):
             input_dict.update(args[i])
+        input_dict = {k.replace('widget_', ''): v for k, v in input_dict.items()}  # strip out extra text
         self.__dict__ = input_dict
         self.sss = True  # False for verbose mode
-        self.wavelength_array = np.arange(self.wavelength.value[0], self.wavelength.value[1], dfs.plot_step)
+        print(self.__dict__)
+        self.wavelength_array = np.arange(self.wavelength[0], self.wavelength[1], dfs.plot_step)
         self.plot_step = self.wavelength_array[2] - self.wavelength_array[1]
         self.recalculate_wavelength()
         # initialize columndatasources
@@ -41,19 +43,19 @@ class session:
         print("{} Call from: {}".format(dfs.string_prefix, caller))
         if (caller == self.wavelength.name):
             self.recalculate_wavelength()
-        if (self.tabs.active == 0):
+        if (self.tabs == 0):
             return self.snr(caller)
-        elif (self.tabs.active == 1):
+        elif (self.tabs == 1):
             return self.os()
-        elif (self.tabs.active == 2):
+        elif (self.tabs == 2):
             return self.sky()
-        elif (self.tabs.active == 3):
+        elif (self.tabs == 3):
             return self.dichro()
-        elif (self.tabs.active == 4):
+        elif (self.tabs == 4):
             return self.gt()
-        elif (self.tabs.active == 5):
+        elif (self.tabs == 5):
             return self.ccd()
-        elif (self.tabs.active == 6):
+        elif (self.tabs == 6):
             return self.atmo_ext()
         else:
             raise ValueError("{} Invalid update request!".format(dfs.string_prefix))
@@ -119,7 +121,7 @@ class session:
                                                                     ccd_blue=ccd_blue, ccd_red=ccd_red, extinction=extinction, mirror_loss=mirror_loss)
         signal_blue, signal_red = self.recalculate_signal(counts=counts, percent=percent, total_eff_blue=total_eff_blue, total_eff_red=total_eff_red)
         x = self.wavelength_array
-        if self.withnoise.active:
+        if self.withnoise:
             snr_blue, snr_red = self.calc_snr(read_noise=read_noise, signal_blue=signal_blue, signal_red=signal_red, noise_blue=noise_blue, noise_red=noise_red)
             error_blue, error_red = self.calc_error(snr_blue=snr_blue, snr_red=snr_red, read_noise=read_noise)
             yb, yr = np.add(signal_blue, error_blue), np.add(signal_red, error_red)
@@ -176,12 +178,12 @@ class session:
         return noise_blue, noise_red
 
     def recalculate_counts(self, flux_y, area):
-        power = flux_y * area * self.time.value * self.plot_step
-        counts = np.divide(np.divide(power, np.divide((constants.h.value * constants.c.value), self.wavelength_array)), 1e10)
+        power = flux_y * area * self.time * self.plot_step
+        counts = np.divide(np.divide(power, np.divide((constants.h * constants.c), self.wavelength_array)), 1e10)
         return counts
 
     def recalculate_counts_noise(self, sky_y, extension, area):
-        counts_noise = np.multiply(np.multiply(sky_y, extension), (area*self.time.value*self.plot_step))
+        counts_noise = np.multiply(np.multiply(sky_y, extension), (area*self.time*self.plot_step))
         return counts_noise
 
     def recalculate_efficiency(self, grating_blue, grating_red, dichro_blue, dichro_red, ccd_blue, ccd_red, extinction, mirror_loss):
@@ -221,14 +223,14 @@ class session:
                 print('{} {}% of this bandpass has zero flux'.format(dfs.string_prefix, percent_zeros))
 
         # filter bandpass and associated flux
-        if (self.mag_sys.active == 0):
+        if (self.mag_sys == 0):
             flux_vega = spectres(self.wavelength_array, dh.vega_file[0], dh.vega_file[1]) * 1e10  # fixed... I hope?
             mag_model = -2.5 * np.log10(np.divide(math.fsum(flux * _extinction * _lambda * trans), math.fsum(flux_vega * trans * _lambda * _extinction))) + 0.03
-        elif (self.mag_sys.active == 1):
-            mag_model = -48.6 - 2.5 * np.log10(math.fsum(flux * trans * _extinction * _lambda) / math.fsum(trans * _lambda * _extinction * (constants.c.value/np.square(_lambda))))
+        elif (self.mag_sys == 1):
+            mag_model = -48.6 - 2.5 * np.log10(math.fsum(flux * trans * _extinction * _lambda) / math.fsum(trans * _lambda * _extinction * (constants.c/np.square(_lambda))))
         else:
-            raise ValueError("{} Invalid magnitude system option (mag_sys_opt): {}".format(dfs.string_prefix, self.mag_sys.active))
-        del_mag = self.mag.value - mag_model
+            raise ValueError("{} Invalid magnitude system option (mag_sys_opt): {}".format(dfs.string_prefix, self.mag_sys))
+        del_mag = self.mag - mag_model
         output_flux = np.multiply(object_y, 10 ** np.negative(del_mag/2.5))
         old_res = object_x[2] - object_x[1]
         if (old_res < self.plot_step):
@@ -238,44 +240,44 @@ class session:
         return flux, flux_y
 
     def recalculate_wavelength(self):
-        if (self.wavelength_array[0] != self.wavelength.value[0]) or (self.wavelength_array[-1] != self.wavelength.value[1]):
-            self.wavelength_array = np.arange(self.wavelength.value[0], self.wavelength.value[1], dfs.plot_step)  # change plot step later if dynamic algorithm desired
+        if (self.wavelength_array[0] != self.wavelength[0]) or (self.wavelength_array[-1] != self.wavelength[1]):
+            self.wavelength_array = np.arange(self.wavelength[0], self.wavelength[1], dfs.plot_step)  # change plot step later if dynamic algorithm desired
             self.plot_step = self.wavelength_array[2] - self.wavelength_array[1]
 
     def change_object_type(self, selected_filter_x, selected_filter_y, lambda_A):
-        if (self.star_type.value is None):
+        if (self.star_type is None):
             curr_star, curr_gal = 4, 0
         else:
-            curr_star = np.where(np.asarray(stc.star_types) == self.star_type.value)[0][0]
-            curr_gal = np.where(np.asarray(stc.galaxy_types) == self.galaxy_type.value)[0][0]
-        if (self.object_type.active == 0):  # stellar classifications
+            curr_star = np.where(np.asarray(stc.star_types) == self.star_type)[0][0]
+            curr_gal = np.where(np.asarray(stc.galaxy_types) == self.galaxy_type)[0][0]
+        if (self.object_type == 0):  # stellar classifications
             object_data = dh.starfiles[curr_star]
-        elif (self.object_type.active == 1):
+        elif (self.object_type == 1):
             object_data = dh.galaxyfiles[curr_gal]
         else:
-            raise ValueError("{} Invalid object class: ({})".format(dfs.string_prefix, stc.object_types[self.object_type.active]))
-        object_x = object_data[0] * (1 + self.redshift.value)
+            raise ValueError("{} Invalid object class: ({})".format(dfs.string_prefix, stc.object_types[self.object_type]))
+        object_x = object_data[0] * (1 + self.redshift)
         object_y = object_data[1]
         flux_A = spectres(lambda_A, object_x, object_y)
         if not self.sss:
-            print("{} Object type: {}".format(dfs.string_prefix, stc.object_types[self.object_type.active]))
+            print("{} Object type: {}".format(dfs.string_prefix, stc.object_types[self.object_type]))
         return object_x, object_y, flux_A
 
     def change_grating_opt(self, caller):
         if caller in etkeys.func_grating:
-            self.stored_delta_lambda = dfs.dld[self.grating.active] * self.slit.value / 0.7
+            self.stored_delta_lambda = dfs.dld[self.grating] * self.slit / 0.7
             if not self.sss:
-                print("{} Grating: \'{} resolution\'".format(dfs.string_prefix, 'high' if (self.grating.active == 1) else 'low'))
+                print("{} Grating: \'{} resolution\'".format(dfs.string_prefix, 'high' if (self.grating == 1) else 'low'))
         return self.stored_delta_lambda
 
     def change_moon_days(self):
         delta_lambda = self.change_grating_opt('init')
         if not self.sss:
-            print("{} Days since/until new moon: {}".format(dfs.string_prefix, stc.moon_opts[self.moon.active]))
+            print("{} Days since/until new moon: {}".format(dfs.string_prefix, stc.moon_opts[self.moon]))
         return self.recalculate_sky_flux(delta_lambda)
 
     def change_num_mirrors(self):
-        if (self.telescope.active == 0):
+        if (self.telescope == 0):
             return dfs.area[0]
         else:
             return dfs.area[1]
@@ -284,7 +286,7 @@ class session:
         if (caller == 'init'):
             curr_fil = 7
         else:
-            curr_fil = np.where(np.asarray(etpaths.filter_files) == self.filter.value)[0]
+            curr_fil = np.where(np.asarray(etpaths.filter_files) == self.filter)[0]
         if caller in etkeys.func_filter:
             selected_filter = dh.filterfiles[curr_fil]
             filter_min = min(selected_filter[0])
@@ -298,17 +300,17 @@ class session:
         return self.store_filer_0, self.store_filter_1, self.store_filter_2
 
     def recalculate_seeing(self):
-        _sigma = self.seeing.value / gaussian_sigma_to_fwhm
+        _sigma = self.seeing / gaussian_sigma_to_fwhm
         funx = lambda x: (1/(_sigma*np.sqrt(2*math.pi)))*np.exp(np.divide(np.negative(np.square(x)), (np.multiply(np.square(_sigma), 2))))
-        percent_u, percent_err_u = integrate.quad(funx, (-self.slit.value/2), (self.slit.value/2))
-        percent_l, percent_err_l = integrate.quad(funx, (-self.seeing.value/2), (self.seeing.value/2))
+        percent_u, percent_err_u = integrate.quad(funx, (-self.slit/2), (self.slit/2))
+        percent_l, percent_err_l = integrate.quad(funx, (-self.seeing/2), (self.seeing/2))
         percent = percent_u * percent_l  # can use error if you add it later...
-        extension = self.seeing.value * self.slit.value
+        extension = self.seeing * self.slit
         return percent, extension
 
     def recalculate_sky_flux(self, delta_lambda):
-        sky_x = dh.skyfiles[self.moon.active][0] * 1e4
-        sky_y = dh.skyfiles[self.moon.active][1] / 1e4
+        sky_x = dh.skyfiles[self.moon][0] * 1e4
+        sky_y = dh.skyfiles[self.moon][1] / 1e4
         old_res = sky_x[2] - sky_x[1]
         _sigma = delta_lambda / gaussian_sigma_to_fwhm
         funx = lambda x: (1/(_sigma*np.sqrt(2*math.pi)))*np.exp(np.divide(np.negative(np.square(x)), (np.multiply(np.square(_sigma), 2))))
@@ -346,13 +348,13 @@ class session:
 
     def recalculate_readnoise(self, caller):  # probably not implemented in all necessary places yet...
         if caller in etkeys.func_readnoise:
-            spectral_resolution = math.ceil((self.slit.value/(0.7/12))/2)*2  # px (ceil()/2)*2 to round up to next even integer
-            spatial_resolution = math.ceil((self.seeing.value/(0.7/12))/2)*2
-            extent = self.seeing.value * self.slit.value
+            spectral_resolution = math.ceil((self.slit/(0.7/12))/2)*2  # px (ceil()/2)*2 to round up to next even integer
+            spatial_resolution = math.ceil((self.seeing/(0.7/12))/2)*2
+            extent = self.seeing * self.slit
             npix = extent/(0.7/12)**2
-            self.stored_read_noise = math.ceil(dfs.rn_default * spectral_resolution * spatial_resolution / ((self.binning.active + 1)**2))  # +1 because zero indexing
+            self.stored_read_noise = math.ceil(dfs.rn_default * spectral_resolution * spatial_resolution / ((self.binning + 1)**2))  # +1 because zero indexing
             if not self.sss:
-                print('{0} Pixel binning: ({1}x{1})'.format(dfs.string_prefix, (self.binning.active + 1)))
+                print('{0} Pixel binning: ({1}x{1})'.format(dfs.string_prefix, (self.binning + 1)))
                 print('{0} Extent: {1} arcsec^2\n{0} num pixels/resel: {2} px\n{0} spectral resolution: {3} px\n{0} spatial resolution: {4} \
                     px'.format(dfs.string_prefix, extent, int(math.ceil(npix)), spectral_resolution, spatial_resolution))
         return self.stored_read_noise

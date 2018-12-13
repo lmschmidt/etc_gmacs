@@ -13,6 +13,7 @@ from bokeh.models.widgets import Dropdown, RadioButtonGroup, CheckboxButtonGroup
 import strings as stc
 import defaults as dfs
 import etc as etcalc
+# import slim as etslim
 
 # set up data
 # create glyphs and their sources
@@ -65,6 +66,8 @@ all_widgets = widgets_with_active + widgets_with_values
 # dict to hold all etc input values
 etc_inputs = {key: None for key in stc.widget_names}
 
+
+
 # Set up callbacks for sliders to only call on mouseup to throttle calling main ETC code see https://stackoverflow.com/questions/38375961/throttling-in-bokeh-application
 
 # link callbacks
@@ -103,16 +106,18 @@ def update_etc_inputs(attr, old, new):
 
     print(etc_inputs)
     
-def update_figure():
-    # to populate dictionary on first run if no values are changed, toggle triggers dictionary update
+def update_figure(caller):
+    # to populate dictionary on first run if no values are changed, 
+    # toggle triggers dictionary update, kind of a hack
     if None in etc_inputs.values():
         widget_telescope_size.active = True
         widget_telescope_size.active = False
+        #sess = etslim.session(etc_inputs) # create an etc session object with initial values
 
-    print('updating figure \n', etc_inputs)
-    results = etcalc.recalculate(etc_inputs)
-    print(results)
-    widget_text.update(text=results)
+    print('updating figure \n', caller)
+    wavelength, plot_y_red, plot_y_blue, labels, title = etcalc.recalculate(caller)
+    print(labels, title)
+    # widget_text.update(text=results)
     
     # plot_x, plot_yb, plot_yr = sess.update(caller)
     # if (widget_channels.active == [0]):
@@ -157,7 +162,7 @@ for i, widge in enumerate(widgets_with_active):
     # etc_inputs.widge = widge.value
     widge.on_change("active", update_etc_inputs)
 
-widget_update.on_click(update_figure)
+widget_update.on_click(update_figure(etc_inputs))
 
 
 

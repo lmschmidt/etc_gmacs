@@ -40,10 +40,9 @@ mirror_file = fileDir + '/core/mirror_300-1200nm.txt'
 galaxy_files = ['SB1', 'SB2', 'SB3', 'SB4', 'SB5', 'SB6', 'S0', 'Sa', 'Sb', 'Sc', 'bulge', 'ellipticals', 'lbg_all_flam']
 stellar_files = ['o5v.dat', 'b0v.dat', 'b57v.dat', 'a0v.dat', 'a5v.dat', 'f0v.dat', 'g0v.dat', 'g5v.dat', 'k0v.dat', 'k5v.dat', 'm0v.dat', 'm5v.dat', 'f5v.dat']
 skyfiles = ['00d_315-1200nm.csv', '03d_315-1200nm.csv', '07d_315-1200nm.csv', '10d_315-1200nm.csv', '14d_315-1200nm.csv']
-# filter_files = ['BesB.dat', 'BesI.dat', 'BesR.dat', 'BesU.dat', 'BesV.dat', 'g.dat', 'i.dat', 'photonb.dat', 'photonI.dat',
-#                 'photonR.dat', 'photonUX.dat', 'photonV.dat', 'r.dat', 'u.dat', 'z.dat']
-filter_files = ['photonUX.dat', 'photonB.dat', 'photonV.dat', 'photonR.dat', 'photonI.dat', 'u.dat', 'g.dat', 'r.dat', 'i.dat', 'z.dat']
-
+filter_files = ['BesU.dat', 'BesB.dat', 'BesV.dat', 'BesR.dat', 'BesI.dat',
+                'u.dat', 'g.dat', 'r.dat', 'i.dat', 'z.dat',
+                'photonUX.dat', 'photonB.dat', 'photonV.dat', 'photonR.dat', 'photonI.dat']
 
 ''' keychain '''
 # argument keys (probably not right,  yet)
