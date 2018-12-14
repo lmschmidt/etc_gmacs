@@ -37,10 +37,12 @@ p0.add_glyph(cds_red, gly_red)
 # !!!!need to impliment https://groups.google.com/a/continuum.io/forum/#!topic/bokeh/nwkfeLbvgUg !!!
 
 # set up widgets
-widget_telescope_size = RadioButtonGroup(labels=stc.telescope_sizes, active=0, name=stc.widget_names[0])
+widget_telescope_txt = Div(text="Telescope:")
+widget_telescope_size = RadioButtonGroup(labels=stc.telescope_sizes, active=1, name=stc.widget_names[0])
 widget_object_type = RadioButtonGroup(labels=stc.object_types, active=0, name=stc.widget_names[1])
 widget_star_type = Select(value=stc.star_types_tup[4][0], title=stc.widget_headers[2], options=stc.star_types_tup, name=stc.widget_names[2])
 widget_galaxy_type = Select(value=stc.galaxy_types_tup[0][0], title=stc.widget_headers[3], options=stc.galaxy_types_tup, name=stc.widget_names[3])
+widget_galaxy_type.disabled = True  # disable on startup
 widget_mag_sys = RadioButtonGroup(labels=stc.mag_sys_opts, active=1, name=stc.widget_names[4])
 widget_mag = Slider(start=(0), end=(30), value=(25), step=(0.1), title=stc.widget_headers[5], name=stc.widget_names[5],  callback_policy="mouseup")
 widget_filter = Select(value=stc.filters_tup[7][0], title=stc.widget_headers[6], options=stc.filters_tup, name=stc.widget_names[6])
@@ -51,7 +53,7 @@ widget_binning = RadioButtonGroup(labels=stc.bin_opts, active=1, name=stc.widget
 widget_redshift = Slider(start=(0), end=(2), value=(0), step=(0.01), title=stc.widget_headers[10], name=stc.widget_names[10])
 widget_seeing = Slider(start=(0.25), end=(2.0), value=(0.65), step=(0.1), title=stc.widget_headers[11], name=stc.widget_names[11])
 widget_slit = Slider(start=(0.25), end=(2.0), value=(0.7), step=(0.05), title=stc.widget_headers[12], name=stc.widget_names[12])
-widget_time = Slider(start=(0), end=(21600), value=(3600), step=(10), title=stc.widget_headers[13], name=stc.widget_names[13])
+widget_time = Slider(start=(0), end=(36000), value=(3600), step=(10), title=stc.widget_headers[13], name=stc.widget_names[13])
 widget_wavelength = RangeSlider(start=dfs.wavelength_limits[0],  end=dfs.wavelength_limits[1],
                                 value=((dfs.wavelength_limits[0]), (dfs.wavelength_limits[1])), step=(10), title=stc.widget_headers[14], name=stc.widget_names[14])
 widget_channels = CheckboxButtonGroup(labels=stc.channels,  active=[0, 1],  name=stc.widget_names[15])
@@ -74,31 +76,7 @@ all_widgets = widgets_with_active + widgets_with_values
 # dict to hold all etc input values
 etc_inputs = {key: None for key in stc.widget_names}
 
-
-
-# Set up callbacks for sliders to only call on mouseup to throttle calling main ETC code see https://stackoverflow.com/questions/38375961/throttling-in-bokeh-application
-
 # link callbacks
-
-# for i, widge in enumerate(widgets_with_active):
-#    print(widge.name)
-#    widge.on_change('active',  lambda attr,  old,  new: update_data(widge.name))
-
-# set up callbacks
-
-# def update_title(attrname,  old,  new):
-#    plot.title.text = text.value
-
-# text.on_change('value',  update_title)
-
-# def update_data_value(attrname,  old,  new):
-#     # etc_inputs.attrname = new
-#     print(attrname, old, new)
-# 
-# 
-# def update_data_active(attrname,  old,  new):
-#     # etc_inputs.attrname = new
-#     print(attrname, old, new)
 
 def update_etc_inputs(attr, old, new):
     # update dictionary of ETC inputs
@@ -166,19 +144,7 @@ def update_figure():
         p0.xaxis.axis_label = labels[0]
         p0.yaxis.axis_label = labels[1]
 
-#    # Get the current slider values
-#    a = amplitude.value
-#    b = offset.value
-#    w = phase.value
-#    k = freq.value
-#
-#    # Generate the new curve
-#    x = np.linspace(0,  4*np.pi,  N)
-#    y = a*np.sin(k*x + w) + b
-#
-#    source.data = dict(x=x,  y=y)
-
-
+# get current values
 for i, widge in enumerate(widgets_with_values):
     # print(i, widge.name)
     # etc_inputs.widge = widge.value
@@ -191,13 +157,9 @@ for i, widge in enumerate(widgets_with_active):
 
 widget_update.on_click(update_figure)
 
-
-
-
-
 # Set up layouts and add to document
 
-widget_group_one = widgetbox(children=[widget_telescope_size, widget_object_type, widget_star_type, widget_galaxy_type])
+widget_group_one = widgetbox(children=[widget_telescope_txt, widget_telescope_size, widget_object_type, widget_star_type, widget_galaxy_type])
 widget_group_two = widgetbox(children=[widget_filter, widget_mag, widget_mag_sys])
 widget_group_three = widgetbox(children=[widget_grating, widget_redshift, widget_time, widget_seeing, widget_slit, widget_moon, widget_wavelength,
                                widget_bin_txt, widget_binning, widget_channels, widget_plot, widget_update], sizing_mode=dfs.plot_sizing_mode)
@@ -206,85 +168,3 @@ widgets = column(children=[widget_group_one, widget_group_two, widget_group_thre
 
 curdoc().add_root(layout([[widgets, widget_group_four]],  sizing_mode=dfs.plot_sizing_mode))
 curdoc().title = "GMACS ETC 2.0"
-
-# ################################################################################################
-# ################################################################################################
-# ################################################################################################
-# ################################################################################################
-# ################################################################################################
-# ################################################################################################
-# ################################################################################################
-# ################################################################################################
-#
-#
-# # create figures
-# p0 = figure(plot_width=dfs.plot_dims[0],  plot_height=dfs.plot_dims[1], sizing_mode=dfs.plot_sizing_mode,
-#             x_axis_label=stc.plot_labels[0][1], y_axis_label=stc.plot_labels[0][2])
-# p1 = figure(plot_width=dfs.plot_dims[0],  plot_height=dfs.plot_dims[1], sizing_mode=dfs.plot_sizing_mode,
-#             x_axis_label=stc.plot_labels[1][1], y_axis_label=stc.plot_labels[1][2])
-# p2 = figure(plot_width=dfs.plot_dims[0],  plot_height=dfs.plot_dims[1], sizing_mode=dfs.plot_sizing_mode,
-#             x_axis_label=stc.plot_labels[2][1], y_axis_label=stc.plot_labels[2][2])
-# p3 = figure(plot_width=dfs.plot_dims[0],  plot_height=dfs.plot_dims[1], sizing_mode=dfs.plot_sizing_mode,
-#             x_axis_label=stc.plot_labels[3][1], y_axis_label=stc.plot_labels[3][2])
-# p4 = figure(plot_width=dfs.plot_dims[0],  plot_height=dfs.plot_dims[1], sizing_mode=dfs.plot_sizing_mode,
-#             x_axis_label=stc.plot_labels[4][1], y_axis_label=stc.plot_labels[4][2])
-# p5 = figure(plot_width=dfs.plot_dims[0],  plot_height=dfs.plot_dims[1], sizing_mode=dfs.plot_sizing_mode,
-#             x_axis_label=stc.plot_labels[5][1], y_axis_label=stc.plot_labels[5][2])
-# p6 = figure(plot_width=dfs.plot_dims[0],  plot_height=dfs.plot_dims[1], sizing_mode=dfs.plot_sizing_mode,
-#             x_axis_label=stc.plot_labels[6][1], y_axis_label=stc.plot_labels[6][2])
-#
-# # group figures
-# figures = [p0, p1, p2, p3, p4, p5, p6]
-# for p in figures:
-#     p.add_glyph(cds_blue, gly_blue)
-#     p.add_glyph(cds_red, gly_red)
-#
-# # create figure tabs
-# tab0 = Panel(child=p0, title=stc.plot_labels[0][0])
-# tab1 = Panel(child=p1, title=stc.plot_labels[1][0])
-# tab2 = Panel(child=p2, title=stc.plot_labels[2][0])
-# tab3 = Panel(child=p3, title=stc.plot_labels[3][0])
-# tab4 = Panel(child=p4, title=stc.plot_labels[4][0])
-# tab5 = Panel(child=p5, title=stc.plot_labels[5][0])
-# tab6 = Panel(child=p6, title=stc.plot_labels[6][0])
-# widget_tabs = Tabs(tabs=[tab0, tab1, tab2, tab3, tab4, tab5, tab6], name='widget_tabs')
-#
-# # group widgets for initialization (not layout)
-# widgets_with_active = [widget_telescope_size, widget_object_type, widget_mag_sys,
-#                        widget_grating, widget_moon, widget_binning, widget_withnoise, widget_channels]
-# widgets_with_values = [widget_star_type, widget_galaxy_type, widget_filter, widget_mag,
-#                        widget_redshift, widget_seeing, widget_slit, widget_time]
-# widgets_coalesced = np.append(np.append(np.append(widgets_with_active, widgets_with_values), widget_wavelength), widget_tabs)
-#
-# # package values for easy passage
-# val_pack = dict()
-# names = [widgets_coalesced[i].name[7:] for i in range(len(widgets_coalesced))]
-# [val_pack.update({names[i]:widgets_coalesced[i]}) for i in range(widgets_coalesced.shape[0])] # comprehend this,  yo
-# sess = etslim.session(val_pack) # create an etc session object with initial values
-#
-#
-#
-# def enabler():
-#     pass
-#
-# # link callbacks
-# for i, widge in enumerate(widgets_with_values):
-#     print(names[i])
-#     widge.on_change('value',  lambda attr,  old,  new: update_bkh(names[i]))
-# for i, widge in enumerate(widgets_with_active):
-#     print(names[i])
-#     widge.on_change('active',  lambda attr,  old,  new: update_bkh(names[i]))
-#
-# widget_group_one = widgetbox(children=[widget_telescope_size, widget_object_type, widget_star_type, widget_galaxy_type])
-# widget_group_two = layout([[widget_mag], [widget_filter, widget_mag_sys]])
-# widget_group_three = widgetbox(children=[widget_grating, widget_redshift, widget_time, widget_seeing, widget_slit, widget_moon, widget_wavelength, widget_binning,
-#                     widget_withnoise, widget_channels], sizing_mode=dfs.plot_sizing_mode)
-# widgets = column(children=[widget_group_one, widget_group_two, widget_group_three], width=dfs.toolbar_width)
-# inputs = row(children=[widgets, widget_tabs])
-#
-# l = layout([[widget_header], [inputs]])
-#
-# #update()  # initial load of the data
-#
-# curdoc().add_root(l)
-# curdoc().title = "GMACS ETC"
