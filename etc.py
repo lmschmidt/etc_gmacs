@@ -52,7 +52,7 @@ telescope_mode = 'first'
 exp_time = 3600
 plot_typ = 'snr'  # options are 'snr', 'obv_spec', 'sky_background', 'dichroic_throughput', 'grating_throughput', 'ccd_qe', 'atmospheric_extinction'
 noise = False
-wavelength = np.arange(3200, 10360, edl.dld[0]/3.)
+wavelength = np.arange(3200, 10360, edl.dld[0]/6.)
 channel = 'both'
 
 string_prefix = '[ etc ] :'
@@ -161,17 +161,18 @@ def recalculate(etcdict):
     redshift = etcdict['widget_redshift']
     seeing = etcdict['widget_seeing']
     slit_size = etcdict['widget_slit']
-    moon_days = etcdict['widget_moon']
+    moon_days = moon_days_keys[etcdict['widget_moon']]
     grating_opt = etcdict['widget_grating']
     telescope_mode = etcdict['widget_telescope']
     exp_time = etcdict['widget_time']
     plot_typ = etcdict['widget_plot']
+    bin_size = etcdict['widget_binning'] + 1  # add one so that value is equal to number of pixels 
     if plot_typ is 'Observed Spectrum + Noise':
         noise = True
     else:
         noise = False
 
-    wavelength = np.arange(etcdict['widget_wavelength'][0], etcdict['widget_wavelength'][1], edl.dld[0]/3.)
+    wavelength = np.arange(etcdict['widget_wavelength'][0], etcdict['widget_wavelength'][1], edl.dld[0]/(12./bin_size))
     ch = etcdict['widget_channels']
     channel =  'both' if len(ch) is 2 else 'red' if ch == True else 'blue'
 
@@ -273,9 +274,13 @@ def recalculate(etcdict):
 
     # grating
     if (channel is 'blue') or (channel is 'both'):
-        blue_grating = spectres(wavelength, (grating1[0]*10), grating1[1])
+        fblue_grating = interpolate.interp1d((grating1[0]*10), grating1[1],  kind='cubic')
+        blue_grating = fblue_grating(wavelength)
+        #blue_grating = spectres(wavelength, (grating1[0]*10), grating1[1])
     if (channel is 'red') or (channel is 'both'):
-        red_grating = spectres(wavelength, (grating2[0]*10), grating2[1])    
+        fred_grating = interpolate.interp1d((grating2[0]*10), grating2[1],  kind='cubic')
+        red_grating = fred_grating(wavelength)
+        #red_grating = spectres(wavelength, (grating2[0]*10), grating2[1])    
 
     # ccd
     if (channel is 'blue') or (channel is 'both'):
@@ -300,12 +305,12 @@ def recalculate(etcdict):
     except:
         bin_size = edl.bin_options_int[edl.bin_options_default_index]  # default 2x2 binning    
 
-    rn = edl.rn_default
+    rn = edl.rn_default  # in e-/px
     if (bin_size > 0) and (bin_size < 5):
         print('[ info ] : Pixel binning: ({}x{})'.format(bin_size, bin_size))
         readnoise = math.ceil(rn * spectral_resolution * spatial_resolution / (bin_size**2))
-        print('[ info ] : Extent: {} arcsec^2\n[ info ] : num pixels/resel: {} px\n[ info ] : spectral resolution: {} px\n[ info ] : spatial resolution: {} px'.format(
-              extent, int(math.ceil(npix)), spectral_resolution, spatial_resolution))
+        print('[ info ] : Extent: {} arcsec^2\n[ info ] : num binned pixels/resel: {} px\n[ info ] : binned spectral resolution: {} px\n[ info ] : binned spatial resolution: {} px'.format(
+              extent, int(math.ceil(npix/(bin_size**2))), int(math.ceil(spectral_resolution/bin_size)), int(math.ceil(spatial_resolution/bin_size))))
     else:
         raise ValueError('{} Invalid pixel binning option ({})'.format(string_prefix, bin_size))    
 
@@ -349,59 +354,68 @@ def recalculate(etcdict):
     ''' pre-plotting '''
     plot_typ_keys = [x[0] for x in stc.plot_labels]  #['snr', 'obv_spec', 'sky_background', 'dichroic_throughput', 'grating_throughput', 'ccd_qe', 'atmospheric_extinction']
     plot_y_blue, plot_y_red = [], []
+   # print(plot_typ_keys)
     if plot_typ in plot_typ_keys:
         if (plot_typ == plot_typ_keys[0]):
-            title = 'Signal-to-Noise Ratio'
-            labels = ['Angstrom', 'Signal-to-Noise Ratio']
+            # Signal to Noise
+            title = stc.plot_labels[0][0]
+            labels = [stc.plot_labels[0][1], stc.plot_labels[0][2]]
             if (channel == 'blue') or (channel == 'both'):
                 plot_y_blue = snr_blue
             if (channel == 'red') or (channel == 'both'):
                 plot_y_red = snr_red
         elif (plot_typ == plot_typ_keys[1]):
-            labels = ['Angstrom', 'Counts (#) per pixel']
-            if noise:
-                title = 'Observed Spectrum (with noise)'
-                if (channel == 'blue') or (channel == 'both'):
-                    plot_y_blue = np.add(blue_signal, error_blue)
-                if (channel == 'red') or (channel == 'both'):
-                    plot_y_red = np.add(red_signal, error_red)
-            else:
-                title = 'Observed Spectrum (without noise)'
-                if (channel == 'blue') or (channel == 'both'):
-                    plot_y_blue = blue_signal
-                if (channel == 'red') or (channel == 'both'):
-                    plot_y_red = red_signal
+            # Spectrum
+            title = stc.plot_labels[1][0]
+            labels = [stc.plot_labels[1][1], stc.plot_labels[1][2]]
+            if (channel == 'blue') or (channel == 'both'):
+                plot_y_blue = blue_signal
+            if (channel == 'red') or (channel == 'both'):
+                plot_y_red = red_signal
         elif (plot_typ == plot_typ_keys[2]):
-            title = 'Observed Sky Background'
-            labels = ['Angstrom', 'Counts (#) per pixel']
+            # Spectrum + Noise
+            title = stc.plot_labels[2][0]
+            labels = [stc.plot_labels[2][1], stc.plot_labels[2][2]]
+            if (channel == 'blue') or (channel == 'both'):
+                plot_y_blue = np.add(blue_signal, error_blue)
+            if (channel == 'red') or (channel == 'both'):
+                plot_y_red = np.add(red_signal, error_red)
+        elif (plot_typ == plot_typ_keys[3]):
+            # Sky Background
+            title = stc.plot_labels[3][0]
+            labels = [stc.plot_labels[3][1], stc.plot_labels[3][2]]
             if (channel == 'blue') or (channel == 'both'):
                 plot_y_blue = blue_noise
             if (channel == 'red') or (channel == 'both'):
                 plot_y_red = red_noise
-        elif (plot_type == plot_typ_keys[3]):
-            title = 'Dichroic Throughput'
-            labels = ['Angstrom', 'Throughput']
+        elif (plot_typ == plot_typ_keys[4]):
+            # Dichroic
+            title = stc.plot_labels[4][0]
+            labels = [stc.plot_labels[4][1], stc.plot_labels[4][2]]
             if (channel == 'blue') or (channel == 'both'):
                 plot_y_blue = blue_dichro
             if (channel == 'red') or (channel == 'both'):
                 plot_y_red = red_dichro
-        elif (plot_typ == plot_typ_keys[4]):
-            title = 'Grating Throughput'
-            labels = ['Angstrom', 'Throughput']
+        elif (plot_typ == plot_typ_keys[5]):
+            # Grating
+            title = stc.plot_labels[5][0]
+            labels = [stc.plot_labels[5][1], stc.plot_labels[5][2]]
             if (channel == 'blue') or (channel == 'both'):
                 plot_y_blue = blue_grating
             if (channel == 'red') or (channel == 'both'):
                 plot_y_red = red_grating
-        elif (plot_typ == plot_typ_keys[5]):
-            title = 'CCD Quantum Efficiency'
-            labels = ['Angstrom', 'QE']
+        elif (plot_typ == plot_typ_keys[6]):
+            # CDD QE
+            title = stc.plot_labels[6][0]
+            labels = [stc.plot_labels[6][1], stc.plot_labels[6][2]]
             if (channel == 'blue') or (channel == 'both'):
                 plot_y_blue = blue_ccd
             if (channel == 'red') or (channel == 'both'):
                 plot_y_red = red_ccd
-        elif (plot_typ == plot_typ_keys[6]):
-            title = 'Atmospheric Extinction'
-            labels = ['Angstrom', 'Throughput']
+        elif (plot_typ == plot_typ_keys[7]):
+            # Atmosphere
+            title = stc.plot_labels[7][0]
+            labels = [stc.plot_labels[7][1], stc.plot_labels[7][2]]
             plot_y_blue = spectres(wavelength, atmo_ext_x, atmo_ext_y)
             plot_y_red = plot_y_blue
     else:

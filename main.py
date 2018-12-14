@@ -128,11 +128,17 @@ def update_figure():
         cds_blue.data['yb'] = plot_y_blue
         gly_blue.line_alpha = 0.5
         gly_red.line_alpha = 0.
+        p0.title.text = title
+        p0.xaxis.axis_label = labels[0]
+        p0.yaxis.axis_label = labels[1]
     elif (etc_inputs['widget_channels'] == [1]):
         cds_red.data['xr'] = wavelength
         cds_red.data['yr'] = plot_y_red
         gly_blue.line_alpha = 0.
         gly_red.line_alpha = 0.5
+        p0.title.text = title
+        p0.xaxis.axis_label = labels[0]
+        p0.yaxis.axis_label = labels[1]
     else:  # crashless catch-all
         gly_blue.line_alpha = 0.5
         gly_red.line_alpha = 0.5
@@ -141,6 +147,9 @@ def update_figure():
         cds_blue.data['yb'] = plot_y_blue
         cds_red.data['xr'] = wavelength
         cds_red.data['yr'] = plot_y_red
+        p0.title.text = title
+        p0.xaxis.axis_label = labels[0]
+        p0.yaxis.axis_label = labels[1]
 
 #    # Get the current slider values
 #    a = amplitude.value
