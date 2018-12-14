@@ -22,8 +22,7 @@ starfiles = [[dh.o5v_x, dh.o5v_y], [dh.b0v_x, dh.b0v_y], [dh.b57v_x, dh.b57v_y],
              [dh.m0v_x, dh.m0v_y], [dh.m5v_x, dh.m5v_y]]
 
 filterfiles = [[dh.filter_besu_x, dh.filter_besu_y], [dh.filter_besb_x, dh.filter_besb_y], [dh.filter_besv_x, dh.filter_besv_y], [dh.filter_besr_x, dh.filter_besr_y], [dh.filter_besi_x, dh.filter_besi_y],
-               [dh.filter_u_x, dh.filter_u_y], [dh.filter_g_x, dh.filter_g_y], [dh.filter_r_x, dh.filter_r_y], [dh.filter_i_x, dh.filter_i_y], [dh.filter_z_x, dh.filter_z_y],
-               [dh.filter_photonux_x, dh.filter_photonux_y], [dh.filter_photonb_x, dh.filter_photonb_y], [dh.filter_photonv_x, dh.filter_photonv_y], [dh.filter_photonr_x, dh.filter_photonr_y], [dh.filter_photoni_x, dh.filter_photoni_y]]
+               [dh.filter_u_x, dh.filter_u_y], [dh.filter_g_x, dh.filter_g_y], [dh.filter_r_x, dh.filter_r_y], [dh.filter_i_x, dh.filter_i_y], [dh.filter_z_x, dh.filter_z_y]]
                
 skyfiles = [[dh.skyfile_00d_x, dh.skyfile_00d_y], [dh.skyfile_03d_x, dh.skyfile_03d_y], [dh.skyfile_07d_x, dh.skyfile_07d_y],
             [dh.skyfile_10d_x, dh.skyfile_10d_y], [dh.skyfile_14d_x, dh.skyfile_14d_y]]

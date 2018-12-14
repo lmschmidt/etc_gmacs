@@ -27,6 +27,9 @@ gly_red = glyphs.Line(x='xr', y='yr', line_color='red')
 p0 = figure(plot_width=dfs.plot_dims[0],  plot_height=dfs.plot_dims[1], sizing_mode=dfs.plot_sizing_mode,
             x_axis_label=stc.plot_labels[0][1], y_axis_label=stc.plot_labels[0][2])
 
+p0.add_glyph(cds_blue, gly_blue)
+p0.add_glyph(cds_red, gly_red)
+
 # !!!!need to impliment https://groups.google.com/a/continuum.io/forum/#!topic/bokeh/nwkfeLbvgUg !!!
 
 # set up widgets
@@ -106,7 +109,7 @@ def update_etc_inputs(attr, old, new):
 
     print(etc_inputs)
     
-def update_figure(caller):
+def update_figure():
     # to populate dictionary on first run if no values are changed, 
     # toggle triggers dictionary update, kind of a hack
     if None in etc_inputs.values():
@@ -114,30 +117,30 @@ def update_figure(caller):
         widget_telescope_size.active = False
         #sess = etslim.session(etc_inputs) # create an etc session object with initial values
 
-    print('updating figure \n', caller)
-    wavelength, plot_y_red, plot_y_blue, labels, title = etcalc.recalculate(caller)
+    print('updating figure \n')
+    wavelength, plot_y_red, plot_y_blue, labels, title = etcalc.recalculate(etc_inputs)
     print(labels, title)
-    # widget_text.update(text=results)
+    widget_text.update(text='Plotting: ' + title)
     
     # plot_x, plot_yb, plot_yr = sess.update(caller)
-    # if (widget_channels.active == [0]):
-    #     cds_blue.data['xb'] = plot_x
-    #     cds_blue.data['yb'] = plot_yb
-    #     gly_blue.line_alpha = 0.5
-    #     gly_red.line_alpha = 0.
-    # elif (widget_channels.active == [1]):
-    #     cds_red.data['xr'] = plot_x
-    #     cds_red.data['yr'] = plot_yr
-    #     gly_blue.line_alpha = 0.
-    #     gly_red.line_alpha = 0.5
-    # else:  # crashless catch-all
-    #     gly_blue.line_alpha = 0.5
-    #     gly_red.line_alpha = 0.5
-    #     widget_channels.active = [0, 1]
-    #     cds_blue.data['xb'] = plot_x
-    #     cds_blue.data['yb'] = plot_yb
-    #     cds_red.data['xr'] = plot_x
-    #     cds_red.data['yr'] = plot_yr
+    if (etc_inputs['widget_channels'] == [0]):
+        cds_blue.data['xb'] = wavelength
+        cds_blue.data['yb'] = plot_y_blue
+        gly_blue.line_alpha = 0.5
+        gly_red.line_alpha = 0.
+    elif (etc_inputs['widget_channels'] == [1]):
+        cds_red.data['xr'] = wavelength
+        cds_red.data['yr'] = plot_y_red
+        gly_blue.line_alpha = 0.
+        gly_red.line_alpha = 0.5
+    else:  # crashless catch-all
+        gly_blue.line_alpha = 0.5
+        gly_red.line_alpha = 0.5
+        etc_inputs['widget_channels'] = [0, 1]
+        cds_blue.data['xb'] = wavelength
+        cds_blue.data['yb'] = plot_y_blue
+        cds_red.data['xr'] = wavelength
+        cds_red.data['yr'] = plot_y_red
 
 #    # Get the current slider values
 #    a = amplitude.value
@@ -162,7 +165,7 @@ for i, widge in enumerate(widgets_with_active):
     # etc_inputs.widge = widge.value
     widge.on_change("active", update_etc_inputs)
 
-widget_update.on_click(update_figure(etc_inputs))
+widget_update.on_click(update_figure)
 
 
 

@@ -40,22 +40,16 @@ k5v_x, k5v_y = np.loadtxt(etpaths.stellar_path / etpaths.stellar_files[9], useco
 m0v_x, m0v_y = np.loadtxt(etpaths.stellar_path / etpaths.stellar_files[10], usecols=(0, 1), unpack=True)
 m5v_x, m5v_y = np.loadtxt(etpaths.stellar_path / etpaths.stellar_files[11], usecols=(0, 1), unpack=True)
 
-filter_besb_x, filter_besb_y = np.loadtxt(etpaths.filter_path / etpaths.filter_files[0], usecols=(0, 1), unpack=True, delimiter=',')
-filter_besi_x, filter_besi_y = np.loadtxt(etpaths.filter_path / etpaths.filter_files[1], usecols=(0, 1), unpack=True, delimiter=',')
-filter_besr_x, filter_besr_y = np.loadtxt(etpaths.filter_path / etpaths.filter_files[2], usecols=(0, 1), unpack=True, delimiter=',')
-filter_besu_x, filter_besu_y = np.loadtxt(etpaths.filter_path / etpaths.filter_files[3], usecols=(0, 1), unpack=True, delimiter=',')
-filter_besv_x, filter_besv_y = np.loadtxt(etpaths.filter_path / etpaths.filter_files[4], usecols=(0, 1), unpack=True, delimiter=',')
+filter_besu_x, filter_besu_y = np.loadtxt(etpaths.filter_path / etpaths.filter_files[0], usecols=(0, 1), unpack=True, delimiter=',')
+filter_besb_x, filter_besb_y = np.loadtxt(etpaths.filter_path / etpaths.filter_files[1], usecols=(0, 1), unpack=True, delimiter=',')
+filter_besv_x, filter_besv_y = np.loadtxt(etpaths.filter_path / etpaths.filter_files[2], usecols=(0, 1), unpack=True, delimiter=',')
+filter_besr_x, filter_besr_y = np.loadtxt(etpaths.filter_path / etpaths.filter_files[3], usecols=(0, 1), unpack=True, delimiter=',')
+filter_besi_x, filter_besi_y = np.loadtxt(etpaths.filter_path / etpaths.filter_files[4], usecols=(0, 1), unpack=True, delimiter=',')
 filter_u_x, filter_u_y = np.loadtxt(etpaths.filter_path / etpaths.filter_files[5], usecols=(0, 1), unpack=True, delimiter=',')
 filter_g_x, filter_g_y = np.loadtxt(etpaths.filter_path / etpaths.filter_files[6], usecols=(0, 1), unpack=True, delimiter=',')
 filter_r_x, filter_r_y = np.loadtxt(etpaths.filter_path / etpaths.filter_files[7], usecols=(0, 1), unpack=True, delimiter=',')
 filter_i_x, filter_i_y = np.loadtxt(etpaths.filter_path / etpaths.filter_files[8], usecols=(0, 1), unpack=True, delimiter=',')
 filter_z_x, filter_z_y = np.loadtxt(etpaths.filter_path / etpaths.filter_files[9], usecols=(0, 1), unpack=True, delimiter=',')
-filter_photonux_x, filter_photonux_y = np.loadtxt(etpaths.filter_path / etpaths.filter_files[10], usecols=(0, 1), unpack=True)
-filter_photonb_x, filter_photonb_y = np.loadtxt(etpaths.filter_path / etpaths.filter_files[11], usecols=(0, 1), unpack=True)
-filter_photonv_x, filter_photonv_y = np.loadtxt(etpaths.filter_path / etpaths.filter_files[12], usecols=(0, 1), unpack=True)
-filter_photonr_x, filter_photonr_y = np.loadtxt(etpaths.filter_path / etpaths.filter_files[13], usecols=(0, 1), unpack=True)
-filter_photoni_x, filter_photoni_y = np.loadtxt(etpaths.filter_path / etpaths.filter_files[14], usecols=(0, 1), unpack=True)
-
 
 skyfile_00d_x, skyfile_00d_y = np.loadtxt(etpaths.skyfiles_path / etpaths.skyfiles[0], usecols=(0, 1), unpack=True)
 skyfile_03d_x, skyfile_03d_y = np.loadtxt(etpaths.skyfiles_path / etpaths.skyfiles[1], usecols=(0, 1), unpack=True)
@@ -86,9 +80,7 @@ starfiles = [[o5v_x, o5v_y], [b0v_x, b0v_y], [b57v_x, b57v_y],
              [m0v_x, m0v_y], [m5v_x, m5v_y]]
 filterfiles = [[filter_besb_x, filter_besb_y], [filter_besi_x, filter_besi_y],
                [filter_besr_x, filter_besr_y], [filter_besu_x, filter_besu_y],
-               [filter_besv_x, filter_besv_y], [filter_photonux_x, filter_photonux_y],
-               [filter_photonb_x, filter_photonb_y], [filter_photonv_x, filter_photonv_y],
-               [filter_photonr_x, filter_photonr_y], [filter_photoni_x, filter_photoni_y],
+               [filter_besv_x, filter_besv_y],
                [filter_u_x, filter_u_y], [filter_g_x, filter_g_y], [filter_r_x, filter_r_y],
                [filter_i_x, filter_i_y], [filter_z_x, filter_z_y]]
 skyfiles = [[skyfile_00d_x, skyfile_00d_y], [skyfile_03d_x, skyfile_03d_y], [skyfile_07d_x, skyfile_07d_y],
