@@ -8,7 +8,7 @@ plot_labels = [('Signal-to-Noise Ratio', 'Wavelength [\u212b]', 'SNR px\u207b\u0
                ('Observed Spectrum + Noise', 'Wavelength [\u212b]', 'Counts px\u207b\u00b9'),
                ('Observed Sky Background', 'Wavelength [\u212b]', 'Counts px\u207b\u00b9'),
                ('Dichroic Throughput', 'Wavelength [\u212b]', 'Throughput'),
-               ('Grating Throughput', 'Wavelength [\u212b]', 'Throughput'),
+               ('Grating Efficiency', 'Wavelength [\u212b]', 'Efficiency'),
                ('CCD Quantum Efficiency', 'Wavelength [\u212b]', 'Quantum Efficiency'),
                ('Atmospheric Extinction', 'Wavelength [\u212b]', 'Extinction')]
 

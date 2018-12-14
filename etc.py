@@ -132,12 +132,14 @@ def mag_cal(wavelength, selected_filter, mag_sys_opt, object_type, redshift, mag
             print('{}% of this bandpass has zero flux'.format(percent_zeros))
 
     if (mag_sys_opt == 'vega'):
-        flux_vega = spectres(wavelength, vega[0], vega[1]) * 1e10  # probably not right Need to read in vega file,  not defined right now
-        print(vega[0])
-        mag_model = -2.5 * np.log10(np.divide(math.fsum(flux * extinction * _lambda * trans), math.fsum(flux_vega * trans * _lambda * extinction))) + 0.03
+        flux_vega = spectres(lambda_A, dh.vega_file[0], dh.vega_file[1]) * 1e10  # flux of Vega in erg s^-1 cm^-2 m^-1
+        print(flux_vega.shape, wavelength.shape)
+        mag_model = -2.5 * np.log10(np.divide(math.fsum(flux * extinction * _lambda * trans), math.fsum(flux_vega * trans * _lambda * extinction))) + 0.03  # assumes Vega is 0.026 mag in all bands
+        print('vega mag_model: ', mag_model)
     elif (mag_sys_opt == 'ab'):
         # mag_model = -48.60 - 2.5 * np.log10(np.divide(math.fsum(np.multiply(flux, trans).multiply(extinction).multiply(_lambda)), math.fsum(trans.multiply(_lambda) * extinction[1]).multiply(const.c.value/(np.square(_lambda)))))
         mag_model = -48.6 - 2.5 * np.log10(math.fsum(flux * trans * extinction * _lambda) / math.fsum(trans * _lambda * extinction * (const.c.value / np.square(_lambda))))
+        print('ab mag_model: ', mag_model)
     else:
         print('Invalid mag_sys_opt!')
 
@@ -154,7 +156,7 @@ def recalculate(etcdict):
     selected_filter = filterfiles[filter_dict[etcdict['widget_filter']]]  # this is dumb and a hack that needs fixed
     mag_sys_opt = etcdict['widget_mag_sys']
     if mag_sys_opt == 0:
-        mag_sys_opt = 'Vega'
+        mag_sys_opt = 'vega'
     elif mag_sys_opt == 1:
         mag_sys_opt = 'ab'
     magnitude = etcdict['widget_mag']
@@ -189,7 +191,7 @@ def recalculate(etcdict):
         index_of = [i for i, name in enumerate(stellar_keys) if star_type in name][0]
         object_type = starfiles[index_of]
     elif object_type == 1:
-        index_of = [i for i, name in enumerate(galactic_keys) if star_type in name][0]
+        index_of = [i for i, name in enumerate(galactic_keys) if galaxy_type in name][0]
         object_type = galaxyfiles[index_of]
     else:
         raise ValueError("{} Invalid object type ({})".format(string_prefix, object_type))    

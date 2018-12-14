@@ -27,6 +27,10 @@ gly_red = glyphs.Line(x='xr', y='yr', line_color='red')
 p0 = figure(plot_width=dfs.plot_dims[0],  plot_height=dfs.plot_dims[1], sizing_mode=dfs.plot_sizing_mode,
             x_axis_label=stc.plot_labels[0][1], y_axis_label=stc.plot_labels[0][2])
 
+p0.title.text_font_size='12pt'
+p0.xaxis.axis_label_text_font_size = "12pt"
+p0.yaxis.axis_label_text_font_size = "12pt"
+
 p0.add_glyph(cds_blue, gly_blue)
 p0.add_glyph(cds_red, gly_red)
 
@@ -42,11 +46,12 @@ widget_mag = Slider(start=(0), end=(30), value=(25), step=(0.1), title=stc.widge
 widget_filter = Select(value=stc.filters_tup[7][0], title=stc.widget_headers[6], options=stc.filters_tup, name=stc.widget_names[6])
 widget_grating = RadioButtonGroup(labels=stc.grating_opts, active=0, name=stc.widget_names[7])
 widget_moon = RadioButtonGroup(labels=stc.moon_opts, active=0, name=stc.widget_names[8])
+widget_bin_txt = Div(text="Pixel Binning:")
 widget_binning = RadioButtonGroup(labels=stc.bin_opts, active=1, name=stc.widget_names[9])
-widget_redshift = Slider(start=(0), end=(15), value=(0), step=(0.01), title=stc.widget_headers[10], name=stc.widget_names[10])
+widget_redshift = Slider(start=(0), end=(2), value=(0), step=(0.01), title=stc.widget_headers[10], name=stc.widget_names[10])
 widget_seeing = Slider(start=(0.25), end=(2.0), value=(0.65), step=(0.1), title=stc.widget_headers[11], name=stc.widget_names[11])
 widget_slit = Slider(start=(0.25), end=(2.0), value=(0.7), step=(0.05), title=stc.widget_headers[12], name=stc.widget_names[12])
-widget_time = Slider(start=(0), end=(21600), value=(2600), step=(10), title=stc.widget_headers[13], name=stc.widget_names[13])
+widget_time = Slider(start=(0), end=(21600), value=(3600), step=(10), title=stc.widget_headers[13], name=stc.widget_names[13])
 widget_wavelength = RangeSlider(start=dfs.wavelength_limits[0],  end=dfs.wavelength_limits[1],
                                 value=((dfs.wavelength_limits[0]), (dfs.wavelength_limits[1])), step=(10), title=stc.widget_headers[14], name=stc.widget_names[14])
 widget_channels = CheckboxButtonGroup(labels=stc.channels,  active=[0, 1],  name=stc.widget_names[15])
@@ -55,7 +60,7 @@ widget_plot = Select(value=stc.plot_labels[0][0], title=stc.widget_headers[16], 
 
 widget_update = Button(label="Update", button_type="success")
 
-widget_text = Div(text="test text for display on the page")
+widget_text = Div(text="Choose input parameters and press the Update button.")
 
 widget_header = Div(text='<h1>'+stc.header1+'</h1><h3>'+stc.header2+'</h3>'+'<hr/>', width=1150, height=100)
 
@@ -106,6 +111,16 @@ def update_etc_inputs(attr, old, new):
     for i, widge in enumerate(widgets_with_active):
         # print(i, widge.name)
         etc_inputs[widge.name] = widge.active
+
+    # disable object selectors depending on star or galaxy button 
+    if etc_inputs['widget_object_type'] == 0:
+        widget_galaxy_type.disabled = True
+        widget_star_type.disabled = False
+    else:
+        widget_galaxy_type.disabled = False
+        widget_star_type.disabled = True
+
+    # Set wavelength range if channels are disabled
 
     print(etc_inputs)
     
@@ -185,7 +200,7 @@ widget_update.on_click(update_figure)
 widget_group_one = widgetbox(children=[widget_telescope_size, widget_object_type, widget_star_type, widget_galaxy_type])
 widget_group_two = widgetbox(children=[widget_filter, widget_mag, widget_mag_sys])
 widget_group_three = widgetbox(children=[widget_grating, widget_redshift, widget_time, widget_seeing, widget_slit, widget_moon, widget_wavelength,
-                               widget_binning, widget_channels, widget_plot, widget_update], sizing_mode=dfs.plot_sizing_mode)
+                               widget_bin_txt, widget_binning, widget_channels, widget_plot, widget_update], sizing_mode=dfs.plot_sizing_mode)
 widget_group_four = column(children=[widget_header, p0, widget_text], sizing_mode=dfs.plot_sizing_mode)
 widgets = column(children=[widget_group_one, widget_group_two, widget_group_three], width=dfs.toolbar_width)
 
