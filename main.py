@@ -47,6 +47,7 @@ widget_mag_sys = RadioButtonGroup(labels=stc.mag_sys_opts, active=1, name=stc.wi
 widget_mag = Slider(start=(0), end=(30), value=(25), step=(0.1), title=stc.widget_headers[5], name=stc.widget_names[5],  callback_policy="mouseup")
 widget_filter = Select(value=stc.filters_tup[7][0], title=stc.widget_headers[6], options=stc.filters_tup, name=stc.widget_names[6])
 widget_grating = RadioButtonGroup(labels=stc.grating_opts, active=0, name=stc.widget_names[7])
+widget_moon_txt = Div(text="Days from new moon:")
 widget_moon = RadioButtonGroup(labels=stc.moon_opts, active=0, name=stc.widget_names[8])
 widget_bin_txt = Div(text="Pixel Binning:")
 widget_binning = RadioButtonGroup(labels=stc.bin_opts, active=1, name=stc.widget_names[9])
@@ -161,7 +162,7 @@ widget_update.on_click(update_figure)
 
 widget_group_one = widgetbox(children=[widget_telescope_txt, widget_telescope_size, widget_object_type, widget_star_type, widget_galaxy_type])
 widget_group_two = widgetbox(children=[widget_filter, widget_mag, widget_mag_sys])
-widget_group_three = widgetbox(children=[widget_grating, widget_redshift, widget_time, widget_seeing, widget_slit, widget_moon, widget_wavelength,
+widget_group_three = widgetbox(children=[widget_grating, widget_redshift, widget_time, widget_seeing, widget_slit, widget_moon_txt, widget_moon, widget_wavelength,
                                widget_bin_txt, widget_binning, widget_channels, widget_plot, widget_update], sizing_mode=dfs.plot_sizing_mode)
 widget_group_four = column(children=[widget_header, p0, widget_text], sizing_mode=dfs.plot_sizing_mode)
 widgets = column(children=[widget_group_one, widget_group_two, widget_group_three], width=dfs.toolbar_width)

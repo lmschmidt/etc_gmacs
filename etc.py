@@ -176,7 +176,7 @@ def recalculate(etcdict):
 
     wavelength = np.arange(etcdict['widget_wavelength'][0], etcdict['widget_wavelength'][1], edl.dld[0]/(12./bin_size))
     ch = etcdict['widget_channels']
-    channel =  'both' if len(ch) is 2 else 'red' if ch == True else 'blue'
+    channel =  'both' if len(ch) is 2 else 'red' if ch == 1 else 'blue'
 
     ''' input handling '''    
 
@@ -222,8 +222,6 @@ def recalculate(etcdict):
     # picks up either unit
     if ((wavelength[0] > (3200 - plot_step)) and (wavelength[-1] < (10360 + plot_step))) or ((wavelength[0] > (320 - plot_step)) and (wavelength[-1] < (1036 + plot_step))):
         plot_step = wavelength[2] - wavelength[1]
-    elif wavelength is 'default':
-        plot_step = delta_lambda / 3
     else:
         raise ValueError('{} Invalid wavelength range ({}-{})'.format(string_prefix, wavelength[0], wavelength[-1]))    
 
@@ -423,6 +421,7 @@ def recalculate(etcdict):
     else:
         raise ValueError('{} Invalid plot_typ ({})'.format(string_prefix, plot_typ))
 
+    print(len(wavelength), len(plot_y_red), len(plot_y_blue))
     return wavelength, plot_y_red, plot_y_blue, labels, title
 
 def main():
