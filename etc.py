@@ -151,6 +151,7 @@ def mag_cal(wavelength, selected_filter, mag_sys_opt, object_type, redshift, mag
 
 def recalculate(etcdict):
     # receive dictionary from user interface and generate x and y to update the plot
+    message = ''
     object_type = etcdict['widget_object_type']
     star_type = etcdict['widget_star_type']
     galaxy_type = etcdict['widget_galaxy_type']
@@ -175,7 +176,6 @@ def recalculate(etcdict):
     else:
         noise = False
 
-    wavelength = np.arange(etcdict['widget_wavelength'][0], etcdict['widget_wavelength'][1], edl.dld[0]/(12./bin_size))
     ch = etcdict['widget_channels']
     channel =  'both' if len(ch) is 2 else 'red' if ch[0] == 1 else 'blue'
     
@@ -188,6 +188,13 @@ def recalculate(etcdict):
     if isinstance(telescope_mode, str):
         telescope_mode = telescope_mode.lower()    
 
+    if telescope_mode in telescope_mode_keys[:3]:
+        area = edl.area[0]
+    elif telescope_mode in telescope_mode_keys[4:]:
+        area = edl.area[1]
+    else:
+        raise ValueError('{} Invalid telescope mode ({})'.format(string_prefix, telescope_mode))    
+
     if object_type == 0:
         index_of = [i for i, name in enumerate(stellar_keys) if star_type in name][0]
         object_type = starfiles[index_of]
@@ -197,7 +204,6 @@ def recalculate(etcdict):
     else:
         raise ValueError("{} Invalid object type ({})".format(string_prefix, object_type))    
     
-
     if grating_opt in grating_opt_keys[:2]:  # low resolution
         delta_lambda_default = edl.dld[0]
     elif grating_opt in grating_opt_keys[3:]:
@@ -205,19 +211,10 @@ def recalculate(etcdict):
     else:
         raise ValueError("{} Invalid grating option ({})".format(string_prefix, grating_opt))    
 
+    # set resolution element in Angstroms
     delta_lambda = delta_lambda_default * slit_size / 0.7    
-
-    if moon_days in moon_days_keys:
-        sky_background = skyfiles[(int(np.where(np.asarray(moon_days_keys) == moon_days)[0]))]
-    else:
-        raise ValueError('{} Invalid number of days since new moon ({})'.format(string_prefix, moon_days))    
-
-    if telescope_mode in telescope_mode_keys[:3]:
-        area = edl.area[0]
-    elif telescope_mode in telescope_mode_keys[4:]:
-        area = edl.area[1]
-    else:
-        raise ValueError('{} Invalid telescope mode ({})'.format(string_prefix, telescope_mode))    
+    # set wavelength step size to wavelengths sampled by one binned pixel
+    wavelength = np.arange(etcdict['widget_wavelength'][0], etcdict['widget_wavelength'][1], (delta_lambda_default * bin_size / 12.))
 
     plot_step = wavelength[2] - wavelength[1]
     # picks up either unit
@@ -227,9 +224,13 @@ def recalculate(etcdict):
         raise ValueError('{} Invalid wavelength range ({}-{})'.format(string_prefix, wavelength[0], wavelength[-1]))    
 
     print('[ info ] : delta lambda: {} Angstrom,  binned pixel scale {} Angstrom/px'.format(delta_lambda, plot_step))
-    ''' mag_cal '''    
     
+    if moon_days in moon_days_keys:
+        sky_background = skyfiles[(int(np.where(np.asarray(moon_days_keys) == moon_days)[0]))]
+    else:
+        raise ValueError('{} Invalid number of days since new moon ({})'.format(string_prefix, moon_days))   
 
+    ''' mag_cal '''
     star_x,  star_y = mag_cal(wavelength=wavelength, selected_filter=selected_filter, mag_sys_opt=mag_sys_opt, object_type=object_type, redshift=redshift, mag=magnitude)
     old_res = star_x[2] - star_x[1]
     if (old_res < plot_step):
