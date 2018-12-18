@@ -177,8 +177,8 @@ def recalculate(etcdict):
 
     wavelength = np.arange(etcdict['widget_wavelength'][0], etcdict['widget_wavelength'][1], edl.dld[0]/(12./bin_size))
     ch = etcdict['widget_channels']
-    channel =  'both' if len(ch) is 2 else 'red' if ch == 1 else 'blue'
-
+    channel =  'both' if len(ch) is 2 else 'red' if ch[0] == 1 else 'blue'
+    
     ''' input handling '''    
 
     if isinstance(object_type, str):
