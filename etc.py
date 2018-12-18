@@ -18,8 +18,9 @@ galaxyfiles = [[dh.sb1_x, dh.sb1_y], [dh.sb2_x, dh.sb2_y], [dh.sb3_x, dh.sb3_y],
 
 starfiles = [[dh.o5v_x, dh.o5v_y], [dh.b0v_x, dh.b0v_y], [dh.b57v_x, dh.b57v_y],
              [dh.a0v_x, dh.a0v_y], [dh.a5v_x, dh.a5v_y], [dh.f0v_x, dh.f0v_y],
-             [dh.g0v_x, dh.g0v_y], [dh.g5v_x, dh.g5v_y], [dh.k0v_x, dh.k5v_y],
-             [dh.m0v_x, dh.m0v_y], [dh.m5v_x, dh.m5v_y]]
+             [dh.g0v_x, dh.g0v_y], [dh.g5v_x, dh.g5v_y], [dh.k0v_x, dh.k0v_y],
+             [dh.k5v_x, dh.k5v_y], [dh.m0v_x, dh.m0v_y], [dh.m5v_x, dh.m5v_y],
+             [dh.f5v_x, dh.f5v_y]]
 
 filterfiles = [[dh.filter_besu_x, dh.filter_besu_y], [dh.filter_besb_x, dh.filter_besb_y], [dh.filter_besv_x, dh.filter_besv_y], [dh.filter_besr_x, dh.filter_besr_y], [dh.filter_besi_x, dh.filter_besi_y],
                [dh.filter_u_x, dh.filter_u_y], [dh.filter_g_x, dh.filter_g_y], [dh.filter_r_x, dh.filter_r_y], [dh.filter_i_x, dh.filter_i_y], [dh.filter_z_x, dh.filter_z_y]]
