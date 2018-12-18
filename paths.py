@@ -3,7 +3,7 @@ from pathlib import Path
 
 ''' paths '''
 # get parent directory
-parentDir = Path.cwd()  / 'gmacs-etc'
+parentDir = Path.cwd()  / 'etc_gmacs'
 
 galaxy_path = parentDir / 'core' / 'kinney'
 stellar_path = parentDir / 'core' / 'pickle'

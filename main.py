@@ -118,16 +118,14 @@ def update_figure():
     
     # plot_x, plot_yb, plot_yr = sess.update(caller)
     if (etc_inputs['widget_channels'] == [0]):
-        cds_blue.data['xb'] = wavelength
-        cds_blue.data['yb'] = plot_y_blue
+        cds_blue.data = dict(xb=wavelength, yb=plot_y_blue)
         gly_blue.line_alpha = 0.5
         gly_red.line_alpha = 0.
         p0.title.text = title
         p0.xaxis.axis_label = labels[0]
         p0.yaxis.axis_label = labels[1]
     elif (etc_inputs['widget_channels'] == [1]):
-        cds_red.data['xr'] = wavelength
-        cds_red.data['yr'] = plot_y_red
+        cds_red.data = dict(xr=wavelength, yr=plot_y_red)
         gly_blue.line_alpha = 0.
         gly_red.line_alpha = 0.5
         p0.title.text = title
@@ -137,10 +135,8 @@ def update_figure():
         gly_blue.line_alpha = 0.5
         gly_red.line_alpha = 0.5
         etc_inputs['widget_channels'] = [0, 1]
-        cds_blue.data['xb'] = wavelength
-        cds_blue.data['yb'] = plot_y_blue
-        cds_red.data['xr'] = wavelength
-        cds_red.data['yr'] = plot_y_red
+        cds_blue.data = dict(xb=wavelength, yb=plot_y_blue)
+        cds_red.data = dict(xr=wavelength, yr=plot_y_red)
         p0.title.text = title
         p0.xaxis.axis_label = labels[0]
         p0.yaxis.axis_label = labels[1]
