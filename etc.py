@@ -337,16 +337,19 @@ def recalculate(etcdict):
         red_total_eff_noise = np.multiply(np.multiply(red_dichro, red_grating), (red_ccd * np.square(mirror) * coating_eff_red))  # HERERHERAJLSKDFJLKJ
         red_noise = np.multiply(counts_noise, red_total_eff_noise)    
 
+    # SNR
     if (channel == 'blue') or (channel == 'both'):
         snr_blue = np.divide(blue_signal, np.sqrt(blue_signal + blue_noise + np.square(readnoise)))
     if (channel == 'red') or (channel == 'both'):
         snr_red = np.divide(red_signal, np.sqrt(red_signal + red_noise + np.square(readnoise)))    
 
+    # sigma
     if (channel == 'blue') or (channel == 'both'):
         sigma_blue = np.sqrt(blue_signal + blue_noise + np.square(readnoise))
     if (channel == 'red') or (channel == 'both'):
         sigma_red = np.sqrt(red_signal + red_noise + np.square(readnoise))    
 
+    # error
     if (channel == 'blue') or (channel == 'both'):
         error_blue = np.random.normal(loc=0,  scale=sigma_blue, size=len(snr_blue))
     if (channel == 'red') or (channel == 'both'):
@@ -423,7 +426,6 @@ def recalculate(etcdict):
     else:
         raise ValueError('{} Invalid plot_typ ({})'.format(string_prefix, plot_typ))
 
-    print(len(wavelength), len(plot_y_red), len(plot_y_blue))
     return wavelength, plot_y_red, plot_y_blue, labels, title
 
 def main():
