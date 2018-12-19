@@ -292,7 +292,7 @@ def recalculate(etcdict):
         fred_ccd = interpolate.interp1d((ccd2[0]*10), ccd2[1],  kind='cubic')
         red_ccd = fred_ccd(wavelength)  # spectres(wavelength, (ccd2[0]*10), ccd2[1])    
 
-    # mirror bouncing,  apply twice
+    # GMT mirror reflectivity
     print('mirror: shape is {},  first is {},  last is {},  step is {}'.format(mirror_file_x.shape[0], mirror_file_x[0], mirror_file_x[-1], (mirror_file_x[2] - mirror_file_x[1])))
     fmirror = interpolate.interp1d(mirror_file_x, mirror_file_y,  kind='cubic')
     mirror = fmirror(wavelength)  # spectres(wavelength, mirror_file_x, mirror_file_y)    
@@ -301,7 +301,7 @@ def recalculate(etcdict):
     spectral_resolution = math.ceil((slit_size/(0.7/12))/2)*2  # px (ceil()/2)*2 to round up to next even integer
     spatial_resolution = math.ceil((seeing/(0.7/12))/2)*2  # px (ceil()/2)*2 to round up to next even integer
     extent = seeing * slit_size
-    npix = extent/(0.7/12)**2
+    npix = spectral_resolution * spatial_resolution
     try:
         isinstance(bin_size, int)
     except:
@@ -311,7 +311,7 @@ def recalculate(etcdict):
     if (bin_size > 0) and (bin_size < 5):
         print('[ info ] : Pixel binning: ({}x{})'.format(bin_size, bin_size))
         readnoise = math.ceil(rn * spectral_resolution * spatial_resolution / (bin_size**2))
-        print('[ info ] : Extent: {} arcsec^2\n[ info ] : num binned pixels/resel: {} px\n[ info ] : binned spectral resolution: {} px\n[ info ] : binned spatial resolution: {} px'.format(
+        print('[ info ] : Extent: {} arcsec^2\n[ info ] : num binned pixels/resel: {} px\n[ info ] : binned spectral pixels: {} px\n[ info ] : binned spatial pixels: {} px'.format(
               extent, int(math.ceil(npix/(bin_size**2))), int(math.ceil(spectral_resolution/bin_size)), int(math.ceil(spatial_resolution/bin_size))))
     else:
         raise ValueError('{} Invalid pixel binning option ({})'.format(string_prefix, bin_size))    
