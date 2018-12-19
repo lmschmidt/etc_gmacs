@@ -99,6 +99,10 @@ def update_etc_inputs(attr, old, new):
         widget_galaxy_type.disabled = False
         widget_star_type.disabled = True
 
+    # ensure that at least one channel is selected
+    if not etc_inputs['widget_channels']:
+        widget_channels.active = [0,1]
+
     # Set wavelength range if channels are disabled
 
     print(etc_inputs)
