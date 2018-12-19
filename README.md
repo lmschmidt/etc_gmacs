@@ -1,7 +1,12 @@
-# gmacs-etc
 GMACS Exposure Time Calculator
 
-start with 
-nohup bokeh serve etc_gmacs --port 5100 --allow-websocket-origin=instrumentation.tamu.edu &
+etc_gmacs is an update to the original GMACS exposure time calculator.  The original calculator was a combination of a .cgi script web form with the calculations performed by Octave, an open source Matlab equivalent. Several of the packages were very old and several desired features had not yet been implimented. 
 
+This version is written for Python 3.7 and uses [Bokeh](https://bokeh.pydata.org/en/latest/) to generate the etc input widgets and interactive plot.
+
+## Start Bokeh Server
+The Bokeh server runs on the webserver and is visible from the localhost.  A reverse proxy forwards external requests to the local host to make the server visible to the outside world.  To start the ETC, in a ssh session run the following command:
+```
+nohup bokeh serve etc_gmacs --port 5100 --allow-websocket-origin=instrumentation.tamu.edu &
+```
 https://superuser.com/questions/448445/run-bash-script-in-background-and-exit-terminal
