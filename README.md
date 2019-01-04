@@ -10,3 +10,14 @@ The Bokeh server runs on the webserver and is visible from the localhost.  A rev
 nohup bokeh serve etc_gmacs --port 5100 --allow-websocket-origin=instrumentation.tamu.edu &
 ```
 https://superuser.com/questions/448445/run-bash-script-in-background-and-exit-terminal
+
+## Stop Bokeh Server
+To stop the server in order to update, ssh to the webserver and traverse to the etc_gmacs folder. Run the following
+```
+ps -e | grep bokeh
+```
+This will list the PID of the server process which you can then kill, 
+```
+kill xxxxxx
+```
+Where xxxxxx is the PID.
