@@ -6,7 +6,7 @@ from pathlib import Path
 parentDir = Path.cwd()  / 'etc_gmacs'
 
 #doc file
-doc_path = parentDir / 'readme.pdf'
+doc_path = 'http://instrumentation.tamu.edu/gmacs/etc_gmacs/readme.pdf'
 
 galaxy_path = parentDir / 'core' / 'kinney'
 stellar_path = parentDir / 'core' / 'pickle'

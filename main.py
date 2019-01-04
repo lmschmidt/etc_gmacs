@@ -63,10 +63,10 @@ widget_plot = Select(value=stc.plot_labels[0][0], title=stc.widget_headers[16], 
 
 widget_update = Button(label="Update", button_type="success")
 
-widget_text = Div(text="Choose input parameters and press the Update button.", width=1150, height=100)
+widget_text = Div(text="Choose input parameters and press the Update button.", width=1000, height=100)
 
-widget_header = Div(text='<h1>'+stc.header1+'</h1><h3>'+stc.header2+'</h3>'+'<hr/>', width=800, height=100)
-widget_footer = Div(text='<hr/>'+'<p>'+stc.footer1+'</p><p>'+stc.footer2+'</p>'+'<hr/>', width=800, height=100)
+widget_header = Div(text='<h1>'+stc.header1+'</h1><h3>'+stc.header2+'</h3>'+'<hr/>', width=1000, height=100)
+widget_footer = Div(text='<hr/>'+'<p>'+stc.footer1+'</p><p>'+stc.footer2+'</p>', width=1000, height=100)
 
 # group widgets for initialization (not layout)
 widgets_with_active = [widget_telescope_size, widget_object_type, widget_mag_sys,

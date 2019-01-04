@@ -53,8 +53,8 @@ object_types = ["Stellar", "Galactic"]
 
 header1 = 'GMACS : Exposure Time Calculator v2.0'
 header2 = 'Munnerlyn Astronomical Instrumentation Lab'
-footer1 = '''<a href='etc_gmacs/readme.pdf'>Readme</a>'''
-footer2 = '''contact <a href='&#109;&#97;i&#108;to&#58;%6Cs&#99;h%6Di&#100;t&#64;ph%&#55;9&#115;%&#54;9&#99;&#115;&#46;%74amu&#46;%65du'>lsch&#109;idt&#64;p&#104;y&#115;ics&#46;t&#97;m&#117;&#46;&#101;du</a>'''
+footer1 = '<a href='+str(etpaths.doc_path)+'>README</a>'
+footer2 = '''Send questions or bug reports to <a href='&#109;&#97;i&#108;to&#58;%6Cs&#99;h%6Di&#100;t&#64;ph%&#55;9&#115;%&#54;9&#99;&#115;&#46;%74amu&#46;%65du'>lsch&#109;idt&#64;p&#104;y&#115;ics&#46;t&#97;m&#117;&#46;&#101;du</a>.'''
 mag_sys_opts = ['Vega', 'AB']
 grating_opts = ['Low Resolution', 'High Resolution']
 filter_opts = [name[:-4] for name in etpaths.filter_files]
