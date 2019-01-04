@@ -66,6 +66,7 @@ widget_update = Button(label="Update", button_type="success")
 widget_text = Div(text="Choose input parameters and press the Update button.", width=1150, height=100)
 
 widget_header = Div(text='<h1>'+stc.header1+'</h1><h3>'+stc.header2+'</h3>'+'<hr/>', width=800, height=100)
+widget_footer = Div(text='<hr/>'+'<p>'+stc.footer1+'</p><p>'+stc.footer2+'</p>'+'<hr/>', width=800, height=100)
 
 # group widgets for initialization (not layout)
 widgets_with_active = [widget_telescope_size, widget_object_type, widget_mag_sys,
@@ -164,7 +165,7 @@ widget_group_one = widgetbox(children=[widget_telescope_txt, widget_telescope_si
 widget_group_two = widgetbox(children=[widget_filter, widget_mag, widget_mag_sys])
 widget_group_three = widgetbox(children=[widget_grating, widget_redshift, widget_time, widget_seeing, widget_slit, widget_moon_txt, widget_moon, widget_wavelength,
                                widget_bin_txt, widget_binning, widget_channels, widget_plot, widget_update], sizing_mode=dfs.plot_sizing_mode)
-widget_group_four = column(children=[widget_header, p0, widget_text], sizing_mode=dfs.plot_sizing_mode)
+widget_group_four = column(children=[widget_header, p0, widget_text, widget_footer], sizing_mode=dfs.plot_sizing_mode)
 widgets = column(children=[widget_group_one, widget_group_two, widget_group_three], width=dfs.toolbar_width)
 
 curdoc().add_root(layout([[widgets, widget_group_four]],  sizing_mode=dfs.plot_sizing_mode))

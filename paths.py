@@ -5,6 +5,9 @@ from pathlib import Path
 # get parent directory
 parentDir = Path.cwd()  / 'etc_gmacs'
 
+#doc file
+doc_path = parentDir / 'readme.pdf'
+
 galaxy_path = parentDir / 'core' / 'kinney'
 stellar_path = parentDir / 'core' / 'pickle'
 skyfiles_path = parentDir / 'core' / 'skybackground'
