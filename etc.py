@@ -105,6 +105,7 @@ def mag_cal(wavelength, selected_filter, mag_sys_opt, object_type, redshift, mag
 
     object_x = object_type[0] * (1+redshift)
     object_y = object_type[1]
+    print('objectype:',object_type)
     flux_A = spectres(lambda_A, object_x, object_y)
 
     lambda_A[0] = lambda_A[0] + plot_step
@@ -230,7 +231,7 @@ def recalculate(etcdict):
     else:
         raise ValueError('{} Invalid wavelength range ({}-{})'.format(string_prefix, wavelength[0], wavelength[-1]))    
 
-    message += '<br/> [ info ] : delta lambda: {} \u212b,  binned pixel scale {} Angstrom/px'.format(delta_lambda, round(plot_step,3))
+    message += '<br/> [ info ] : delta lambda: {} \u212b,  binned pixel scale {} \u212b/px'.format(delta_lambda, round(plot_step,3))
     
     if moon_days in moon_days_keys:
         sky_background = skyfiles[(int(np.where(np.asarray(moon_days_keys) == moon_days)[0]))]
