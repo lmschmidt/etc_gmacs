@@ -51,11 +51,11 @@ widget_moon_txt = Div(text="Days from new moon:")
 widget_moon = RadioButtonGroup(labels=stc.moon_opts, active=0, name=stc.widget_names[8])
 widget_bin_txt = Div(text="Pixel Binning:")
 widget_binning = RadioButtonGroup(labels=stc.bin_opts, active=1, name=stc.widget_names[9])
-widget_redshift = Slider(start=(0), end=(2), value=(0), step=(0.01), title=stc.widget_headers[10], name=stc.widget_names[10])
-widget_seeing = Slider(start=(0.25), end=(2.0), value=(0.65), step=(0.1), title=stc.widget_headers[11], name=stc.widget_names[11])
+widget_redshift = Slider(start=(0), end=(10), value=(0), step=(0.01), title=stc.widget_headers[10], name=stc.widget_names[10])
+widget_seeing = Slider(start=(0.25), end=(2.0), value=(0.65), step=(0.05), title=stc.widget_headers[11], name=stc.widget_names[11])
 widget_slit = Slider(start=(0.25), end=(2.0), value=(0.7), step=(0.05), title=stc.widget_headers[12], name=stc.widget_names[12])
 widget_time_inc = RadioButtonGroup(labels=['h','m','s'], active=0, name=stc.widget_names[17])
-widget_time = Slider(start=(1), end=(10), value=(1), step=(0.05), title=stc.widget_headers[13], name=stc.widget_names[13])
+widget_time = Slider(start=(1), end=(100), value=(1), step=(0.05), title=stc.widget_headers[13], name=stc.widget_names[13])
 widget_wavelength = RangeSlider(start=dfs.wavelength_limits[0],  end=dfs.wavelength_limits[1],
                                 value=((dfs.wavelength_limits[0]), (dfs.wavelength_limits[1])), step=(10), title=stc.widget_headers[14], name=stc.widget_names[14])
 widget_channels = CheckboxButtonGroup(labels=stc.channels,  active=[0, 1],  name=stc.widget_names[15])
@@ -105,7 +105,7 @@ def update_etc_inputs(attr, old, new):
     if etc_inputs['widget_time_inc'] == 0:
         widget_time.title = "Exposure Time [h]"
         widget_time.start = 1
-        widget_time.end = 10
+        widget_time.end = 100
         widget_time.step = 0.05
     elif etc_inputs['widget_time_inc'] == 1:
         widget_time.title = "Exposure Time [m]"
@@ -136,9 +136,9 @@ def update_figure():
         #sess = etslim.session(etc_inputs) # create an etc session object with initial values
 
     print('updating figure \n')
-    wavelength, plot_y_red, plot_y_blue, labels, title = etcalc.recalculate(etc_inputs)
-    print(labels, title)
-    widget_text.update(text='Plotting: ' + title)
+    wavelength, plot_y_red, plot_y_blue, labels, title, messages = etcalc.recalculate(etc_inputs)
+    print(labels, title, messages)
+    widget_text.update(text='Plotting: ' + title + messages)
     
     # plot_x, plot_yb, plot_yr = sess.update(caller)
     if (etc_inputs['widget_channels'] == [0]):

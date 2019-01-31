@@ -175,7 +175,7 @@ def recalculate(etcdict):
     else:
         exp_time = float(etcdict['widget_time'])*3600.0
 
-    print('exptime: ', exp_time)
+    message += '<br/> [ info ] : Exposure Time : {} seconds'.format(exp_time)
     plot_typ = etcdict['widget_plot']
     bin_size = etcdict['widget_binning'] + 1  # add one so that value is equal to number of pixels 
     if plot_typ is 'Observed Spectrum + Noise':
@@ -230,7 +230,7 @@ def recalculate(etcdict):
     else:
         raise ValueError('{} Invalid wavelength range ({}-{})'.format(string_prefix, wavelength[0], wavelength[-1]))    
 
-    print('[ info ] : delta lambda: {} Angstrom,  binned pixel scale {} Angstrom/px'.format(delta_lambda, plot_step))
+    message += '<br/> [ info ] : delta lambda: {} \u212b,  binned pixel scale {} Angstrom/px'.format(delta_lambda, round(plot_step,3))
     
     if moon_days in moon_days_keys:
         sky_background = skyfiles[(int(np.where(np.asarray(moon_days_keys) == moon_days)[0]))]
@@ -316,10 +316,10 @@ def recalculate(etcdict):
 
     rn = edl.rn_default  # in e-/px
     if (bin_size > 0) and (bin_size < 5):
-        print('[ info ] : Pixel binning: ({}x{})'.format(bin_size, bin_size))
+        message += '<br/> [ info ] : Pixel binning: ({}x{})'.format(bin_size, bin_size)
         readnoise = math.ceil(rn * spectral_resolution * spatial_resolution / (bin_size**2))
-        print('[ info ] : Extent: {} arcsec^2\n[ info ] : num binned pixels/resel: {} px\n[ info ] : binned spectral pixels: {} px\n[ info ] : binned spatial pixels: {} px'.format(
-              extent, int(math.ceil(npix/(bin_size**2))), int(math.ceil(spectral_resolution/bin_size)), int(math.ceil(spatial_resolution/bin_size))))
+        message += '<br/> [ info ] : Extent: {} arcsec^2 <br/> [ info ] : num binned pixels/resel: {} px <br/> [ info ] : binned spectral pixels: {} px <br/> [ info ] : binned spatial pixels: {} px'.format(
+              round(extent,2), int(math.ceil(npix/(bin_size**2))), int(math.ceil(spectral_resolution/bin_size)), int(math.ceil(spatial_resolution/bin_size)))
     else:
         raise ValueError('{} Invalid pixel binning option ({})'.format(string_prefix, bin_size))    
 
@@ -433,7 +433,7 @@ def recalculate(etcdict):
     else:
         raise ValueError('{} Invalid plot_typ ({})'.format(string_prefix, plot_typ))
 
-    return wavelength, plot_y_red, plot_y_blue, labels, title
+    return wavelength, plot_y_red, plot_y_blue, labels, title, message
 
 def main():
     wavelength, plot_y_red, plot_y_blue, labels, title = recalculate(testvalues)
