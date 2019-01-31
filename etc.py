@@ -70,7 +70,7 @@ filter_dict = dict((v,k) for k, v in dict(enumerate(edl.filter_files)).items()) 
 
 testvalues = {'widget_telescope': True, 'widget_object_type': 0, 'widget_star_type': 'a5v', 'widget_galaxy_type': 'SB1', 'widget_mag_sys': 1,
               'widget_mag': 25, 'widget_filter': 'r.dat', 'widget_grating': 0, 'widget_moon': 0, 'widget_binning': 1, 'widget_redshift': 0,
-              'widget_seeing': 0.65, 'widget_slit': 0.7, 'widget_time': 2600, 'widget_wavelength': (3200, 10360), 'widget_channels': [0, 1],
+              'widget_seeing': 0.65, 'widget_slit': 0.7, 'widget_time': 2600, 'widget_time_inc': 's', 'widget_wavelength': (3200, 10360), 'widget_channels': [0, 1],
               'widget_plot': 'Observed Spectrum + Noise'}
 
 def mag_cal(wavelength, selected_filter, mag_sys_opt, object_type, redshift, mag):
@@ -168,7 +168,14 @@ def recalculate(etcdict):
     moon_days = moon_days_keys[etcdict['widget_moon']]
     grating_opt = etcdict['widget_grating']
     telescope_mode = etcdict['widget_telescope']
-    exp_time = etcdict['widget_time']
+    if etcdict['widget_time_inc'] == 2:
+        exp_time = float(etcdict['widget_time'])
+    elif etcdict['widget_time_inc'] == 1:
+        exp_time = float(etcdict['widget_time'])*60.0
+    else:
+        exp_time = float(etcdict['widget_time'])*3600.0
+
+    print('exptime: ', exp_time)
     plot_typ = etcdict['widget_plot']
     bin_size = etcdict['widget_binning'] + 1  # add one so that value is equal to number of pixels 
     if plot_typ is 'Observed Spectrum + Noise':

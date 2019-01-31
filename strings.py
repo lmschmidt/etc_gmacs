@@ -25,7 +25,7 @@ widget_headers = ["Telescope Mode",  # 0
                   "Redshift [z]",  # 10
                   "Seeing [arcsec]",  # 11
                   "Slit Width [arcsec]",  # 12
-                  "Exposure Time [s]",  # 13
+                  "Exposure Time [h]",  # 13
                   "Spectral Range [\u212b]",  # 14
                   "Active Channels",  # 15
                   "Plot Type"]  # 16
@@ -46,7 +46,8 @@ widget_names = ['widget_telescope',
                 'widget_time',
                 'widget_wavelength',
                 'widget_channels',
-                'widget_plot']  # matched w/ header nums
+                'widget_plot',
+                'widget_time_inc']  # matched w/ header nums except for time_inc as no header is needed
 
 telescope_sizes = ["First light", "Full Size"]
 object_types = ["Stellar", "Galactic"]

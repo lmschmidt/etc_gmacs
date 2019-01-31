@@ -54,7 +54,8 @@ widget_binning = RadioButtonGroup(labels=stc.bin_opts, active=1, name=stc.widget
 widget_redshift = Slider(start=(0), end=(2), value=(0), step=(0.01), title=stc.widget_headers[10], name=stc.widget_names[10])
 widget_seeing = Slider(start=(0.25), end=(2.0), value=(0.65), step=(0.1), title=stc.widget_headers[11], name=stc.widget_names[11])
 widget_slit = Slider(start=(0.25), end=(2.0), value=(0.7), step=(0.05), title=stc.widget_headers[12], name=stc.widget_names[12])
-widget_time = Slider(start=(0), end=(36000), value=(3600), step=(10), title=stc.widget_headers[13], name=stc.widget_names[13])
+widget_time_inc = RadioButtonGroup(labels=['h','m','s'], active=0, name=stc.widget_names[17])
+widget_time = Slider(start=(1), end=(10), value=(1), step=(0.05), title=stc.widget_headers[13], name=stc.widget_names[13])
 widget_wavelength = RangeSlider(start=dfs.wavelength_limits[0],  end=dfs.wavelength_limits[1],
                                 value=((dfs.wavelength_limits[0]), (dfs.wavelength_limits[1])), step=(10), title=stc.widget_headers[14], name=stc.widget_names[14])
 widget_channels = CheckboxButtonGroup(labels=stc.channels,  active=[0, 1],  name=stc.widget_names[15])
@@ -70,7 +71,7 @@ widget_footer = Div(text='<hr/>'+'<p>'+stc.footer1+'</p><p>'+stc.footer2+'</p>',
 
 # group widgets for initialization (not layout)
 widgets_with_active = [widget_telescope_size, widget_object_type, widget_mag_sys,
-                       widget_grating, widget_moon, widget_binning, widget_channels]
+                       widget_grating, widget_moon, widget_binning, widget_channels, widget_time_inc]
 widgets_with_values = [widget_star_type, widget_galaxy_type, widget_filter, widget_mag,
                        widget_redshift, widget_seeing, widget_slit, widget_time, widget_wavelength, widget_plot]
 all_widgets = widgets_with_active + widgets_with_values
@@ -99,6 +100,24 @@ def update_etc_inputs(attr, old, new):
     else:
         widget_galaxy_type.disabled = False
         widget_star_type.disabled = True
+
+    # set time label and ranges
+    if etc_inputs['widget_time_inc'] == 0:
+        widget_time.title = "Exposure Time [h]"
+        widget_time.start = 1
+        widget_time.end = 10
+        widget_time.step = 0.05
+    elif etc_inputs['widget_time_inc'] == 1:
+        widget_time.title = "Exposure Time [m]"
+        widget_time.start = 1
+        widget_time.end = 60
+        widget_time.step = 1
+    elif etc_inputs['widget_time_inc'] == 2:
+        widget_time.title = "Exposure Time [s]"
+        widget_time.start = 0.1
+        widget_time.end = 60
+        widget_time.step = 0.1
+    
 
     # ensure that at least one channel is selected
     if not etc_inputs['widget_channels']:
@@ -163,7 +182,7 @@ widget_update.on_click(update_figure)
 
 widget_group_one = widgetbox(children=[widget_telescope_txt, widget_telescope_size, widget_object_type, widget_star_type, widget_galaxy_type])
 widget_group_two = widgetbox(children=[widget_filter, widget_mag, widget_mag_sys])
-widget_group_three = widgetbox(children=[widget_grating, widget_redshift, widget_time, widget_seeing, widget_slit, widget_moon_txt, widget_moon, widget_wavelength,
+widget_group_three = widgetbox(children=[widget_grating, widget_redshift, widget_time, widget_time_inc, widget_seeing, widget_slit, widget_moon_txt, widget_moon, widget_wavelength,
                                widget_bin_txt, widget_binning, widget_channels, widget_plot, widget_update], sizing_mode=dfs.plot_sizing_mode)
 widget_group_four = column(children=[widget_header, p0, widget_text, widget_footer], sizing_mode=dfs.plot_sizing_mode)
 widgets = column(children=[widget_group_one, widget_group_two, widget_group_three], width=dfs.toolbar_width)
