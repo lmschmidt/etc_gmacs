@@ -96,7 +96,7 @@ def mag_cal(wavelength, selected_filter, mag_sys_opt, object_type, redshift, mag
         magmessage += '<br/> [ info ] : Filter band minimum compatible with wavelength selection.'
     else:
         lambda_min = wavelength[0]
-        magmessage += '<br/> [ warning ] : Filter band truncated by {} \u212b due to minimum wavelength selection.'.format(round(wavelength[0]-filter_min,3))
+        magmessage += '<br/> [ warning ] : Filter band truncated by {} \u212b due to minimum wavelength selection.'.format(np.abs(round(wavelength[0]-filter_min,3)))
 
     if (filter_max < wavelength[-1]):
         lambda_max = filter_max
@@ -106,7 +106,7 @@ def mag_cal(wavelength, selected_filter, mag_sys_opt, object_type, redshift, mag
         magmessage += ', Filter band maximum compatible with wavelength selection.'
     else:
         lambda_max = wavelength[-1]
-        magmessage += '[ warning ] : Filter band truncated by {} \u212b due to maximum wavelength selection.'.format(round(wavelength[-1]-filter_max,3))
+        magmessage += '[ warning ] : Filter band truncated by {} \u212b due to maximum wavelength selection.'.format(np.abs(round(wavelength[-1]-filter_max,3)))
 
     plot_step = wavelength[2] - wavelength[1]
     lambda_A = np.arange(lambda_min, lambda_max, plot_step)
