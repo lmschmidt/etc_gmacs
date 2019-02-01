@@ -110,7 +110,7 @@ def mag_cal(wavelength, selected_filter, mag_sys_opt, object_type, redshift, mag
     print('min and template step: ', zlamdamin, template_step)
 
     if zlamdamin > 3100.0:
-        npad = int((zlamdamin - 3100.0)*template_step)  # get wavelength range to ensure coverage to 3000A and multiply by step size to get padding
+        npad = int((zlamdamin - 3100.0)/template_step)  # get wavelength range to ensure coverage to 3000A and multiply by step size to get padding
         print('npad: ', npad)
         wavepad =  np.arange(3100.0, zlamdamin, template_step) # padded wavelengths
         print('wavepad', wavepad[0], wavepad[-1])
@@ -150,7 +150,7 @@ def mag_cal(wavelength, selected_filter, mag_sys_opt, object_type, redshift, mag
             percent_zeros = (num_zeros / flux.shape[0]) * 100
             print('{}% of this bandpass has zero flux'.format(percent_zeros))
 
-    print(flux, _lambda)
+    print(_lambda,flux)
 
     if (mag_sys_opt == 'vega'):
         flux_vega = spectres(lambda_A, dh.vega_file[0], dh.vega_file[1]) * 1e10  # flux of Vega in erg s^-1 cm^-2 m^-1
