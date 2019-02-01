@@ -201,7 +201,7 @@ def recalculate(etcdict):
     else:
         exp_time = float(etcdict['widget_time'])*3600.0
 
-    message += '<br/> [ info ] : Exposure Time : {} seconds'.format(exp_time)
+    message += '<br/> [ info ] : Exposure Time : {} seconds'.format(round(exp_time,2))
     plot_typ = etcdict['widget_plot']
     bin_size = etcdict['widget_binning'] + 1  # add one so that value is equal to number of pixels 
     if plot_typ is 'Observed Spectrum + Noise':
