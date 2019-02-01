@@ -83,22 +83,30 @@ def mag_cal(wavelength, selected_filter, mag_sys_opt, object_type, redshift, mag
         redshift = 0
         mag = 25
     '''
+    magmessage = ''
+    # check for filter band compatibility with selected wavelength coverage
     filter_min = min(selected_filter[0])
     filter_max = max(selected_filter[0])
 
     if (filter_min > wavelength[0]):
         lambda_min = filter_min
+        magmessage += '<br/> [ info ] : Filter band minimum compatible with wavelength selection.'
     elif (filter_min == wavelength[0]):
         filter_min = selected_filter[int(np.where(selected_filter[0] > wavelength[0])[0])]
+        magmessage += '<br/> [ info ] : Filter band minimum compatible with wavelength selection.'
     else:
         lambda_min = wavelength[0]
+        magmessage += '<br/> [ warning ] : Filter band truncated by {} \u212b due to minimum wavelength selection.'.format(round(wavelength[0]-filter_min,3))
 
     if (filter_max < wavelength[-1]):
         lambda_max = filter_max
+        magmessage += ', Filter band maximum compatible with wavelength selection.'
     elif (filter_max == wavelength[-1]):
         filter_max = selected_filter[int(np.where(selected_filter[0] < wavelength[-1])[-1])]
+        magmessage += ', Filter band maximum compatible with wavelength selection.'
     else:
         lambda_max = wavelength[-1]
+        magmessage += '[ warning ] : Filter band truncated by {} \u212b due to maximum wavelength selection.'.format(round(wavelength[-1]-filter_max,3))
 
     plot_step = wavelength[2] - wavelength[1]
     lambda_A = np.arange(lambda_min, lambda_max, plot_step)
@@ -111,16 +119,16 @@ def mag_cal(wavelength, selected_filter, mag_sys_opt, object_type, redshift, mag
 
     if zlamdamin > 3100.0:
         npad = int((zlamdamin - 3100.0)/template_step)  # get wavelength range to ensure coverage to 3000A and multiply by step size to get padding
-        print('npad: ', npad)
+        #print('npad: ', npad)
         wavepad =  np.arange(3100.0, zlamdamin, template_step) # padded wavelengths
-        print('wavepad', wavepad[0], wavepad[-1])
+        #print('wavepad', wavepad[0], wavepad[-1])
         object_x = np.concatenate((wavepad, object_type[0] * (1+redshift)))  # attach wavelength pad
-        print(object_x)
+        #print(object_x)
         object_y = np.pad(object_type[1], (npad,0), 'constant')  # pad flux
-        print(object_y)
+        #print(object_y)
     else:
         object_x = object_type[0] * (1+redshift)
-        print(object_x[0])
+        #print(object_x[0])
         object_y = object_type[1]
 
     flux_A = spectres(lambda_A, object_x, object_y)
@@ -138,17 +146,15 @@ def mag_cal(wavelength, selected_filter, mag_sys_opt, object_type, redshift, mag
 
     num_zeros = 0
     for lux in flux:
-        if (lux is None) or (lux is 0):
+        if (lux == None) or (lux == 0):
             num_zeros += 1
-            lux = 0
-
-    if (num_zeros >= (flux.shape[0]/5)):
+    if num_zeros > flux.shape[0]*0.1:
         if (num_zeros == flux.shape[0]):
-            print('No flux in this bandpass!')
+            print('\nNo flux in this bandpass!')
             output_flux = np.zeros(wavelength.shape[0])
         else:
             percent_zeros = (num_zeros / flux.shape[0]) * 100
-            print('{}% of this bandpass has zero flux'.format(percent_zeros))
+            magmessage += '<br/>[ warning ] : {}% of this filter bandpass has zero flux'.format(round(percent_zeros,2))
 
     print(_lambda,flux)
 
@@ -167,7 +173,7 @@ def mag_cal(wavelength, selected_filter, mag_sys_opt, object_type, redshift, mag
     del_mag = mag - mag_model
     output_lambda = object_x
     output_flux = np.multiply(object_y, 10 ** np.negative(del_mag/2.5))
-    return output_lambda,  output_flux
+    return output_lambda,  output_flux, magmessage
 
 def recalculate(etcdict):
     # receive dictionary from user interface and generate x and y to update the plot
@@ -258,7 +264,8 @@ def recalculate(etcdict):
         raise ValueError('{} Invalid number of days since new moon ({})'.format(string_prefix, moon_days))   
 
     ''' mag_cal '''
-    star_x,  star_y = mag_cal(wavelength=wavelength, selected_filter=selected_filter, mag_sys_opt=mag_sys_opt, object_type=object_type, redshift=redshift, mag=magnitude)
+    star_x,  star_y, magmsg = mag_cal(wavelength=wavelength, selected_filter=selected_filter, mag_sys_opt=mag_sys_opt, object_type=object_type, redshift=redshift, mag=magnitude)
+    message += magmsg
     old_res = star_x[2] - star_x[1]
     if (old_res < plot_step):
         flux_y = spectres(wavelength, star_x, (star_y*1e-03))  # ergs s-1 cm-2 A-1 to J s-1 m-2 A-1
@@ -336,10 +343,12 @@ def recalculate(etcdict):
 
     rn = edl.rn_default  # in e-/px
     if (bin_size > 0) and (bin_size < 5):
-        message += '<br/> [ info ] : Pixel binning: ({}x{})'.format(bin_size, bin_size)
+        print('[ info ] : Pixel binning: ({}x{})'.format(bin_size, bin_size))
         readnoise = math.ceil(rn * spectral_resolution * spatial_resolution / (bin_size**2))
-        message += '<br/> [ info ] : Extent: {} arcsec^2 <br/> [ info ] : num binned pixels/resel: {} px <br/> [ info ] : binned spectral pixels: {} px <br/> [ info ] : binned spatial pixels: {} px'.format(
-              round(extent,2), int(math.ceil(npix/(bin_size**2))), int(math.ceil(spectral_resolution/bin_size)), int(math.ceil(spatial_resolution/bin_size)))
+        print('[ info ] : binned spectral pixels: {} px \n [ info ] : binned spatial pixels: {} px'.format(
+              int(math.ceil(spectral_resolution/bin_size)), int(math.ceil(spatial_resolution/bin_size))))
+        message += '<br/> [ info ] : Extent: {} arcsec^2 <br/> [ info ] : num binned pixels/resel: {} px '.format(
+              round(extent,2), int(math.ceil(npix/(bin_size**2))))
     else:
         raise ValueError('{} Invalid pixel binning option ({})'.format(string_prefix, bin_size))    
 
