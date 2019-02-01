@@ -250,7 +250,7 @@ def recalculate(etcdict):
     else:
         raise ValueError('{} Invalid wavelength range ({}-{})'.format(string_prefix, wavelength[0], wavelength[-1]))    
 
-    message += '<br/> [ info ] : delta lambda: {} \u212b,  binned pixel scale {} \u212b/px'.format(delta_lambda, round(plot_step,3))
+    message += '<br/> [ info ] : d\u03BB: {} \u212b,  binned pixel scale {} \u212b/px'.format(delta_lambda, round(plot_step,3))
     
     if moon_days in moon_days_keys:
         sky_background = skyfiles[(int(np.where(np.asarray(moon_days_keys) == moon_days)[0]))]
