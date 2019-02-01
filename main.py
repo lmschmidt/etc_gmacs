@@ -131,8 +131,8 @@ def update_figure():
     # to populate dictionary on first run if no values are changed, 
     # toggle triggers dictionary update, kind of a hack
     if None in etc_inputs.values():
-        widget_telescope_size.active = True
         widget_telescope_size.active = False
+        widget_telescope_size.active = True
         #sess = etslim.session(etc_inputs) # create an etc session object with initial values
 
     print('updating figure \n')
