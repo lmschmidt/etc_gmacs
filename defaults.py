@@ -4,7 +4,6 @@ area = [222, 368]
 dld = [3.73, 1.4]
 wavelength_limits = [3200, 10360]
 rn_default = 2
-dark_current = 3  #e-/px/hr at -100C
 coating_eff_red = 0.62
 coating_eff_blue = 0.6
 

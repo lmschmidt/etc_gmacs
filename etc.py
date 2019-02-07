@@ -55,6 +55,7 @@ plot_typ = 'snr'  # options are 'snr', 'obv_spec', 'sky_background', 'dichroic_t
 noise = False
 wavelength = np.arange(3200, 10360, edl.dld[0]/6.)
 channel = 'both'
+dcr = edl.dc_rate
 
 string_prefix = '[ etc ] :'
 coating_eff_red = 0.62
@@ -344,13 +345,16 @@ def recalculate(etcdict):
     rn = edl.rn_default  # in e-/px
     if (bin_size > 0) and (bin_size < 5):
         print('[ info ] : Pixel binning: ({}x{})'.format(bin_size, bin_size))
-        readnoise = math.ceil(rn * spectral_resolution * spatial_resolution / (bin_size**2))
+        read_noise = math.ceil((rn**2) * spectral_resolution * spatial_resolution / (bin_size**2))
         print('[ info ] : binned spectral pixels: {} px \n [ info ] : binned spatial pixels: {} px'.format(
               int(math.ceil(spectral_resolution/bin_size)), int(math.ceil(spatial_resolution/bin_size))))
         message += '<br/> [ info ] : Extent: {} arcsec^2 <br/> [ info ] : num binned pixels/resel: {} px '.format(
               round(extent,2), int(math.ceil(npix/(bin_size**2))))
     else:
         raise ValueError('{} Invalid pixel binning option ({})'.format(string_prefix, bin_size))    
+
+    # Dark Current
+    dark_noise = npix * dcr * exp_time
 
     extinction = spectres(wavelength, atmo_ext_x, atmo_ext_y)  # since not passed from function,  just use global in real version    
 
@@ -375,15 +379,15 @@ def recalculate(etcdict):
 
     # SNR
     if (channel == 'blue') or (channel == 'both'):
-        snr_blue = np.divide(blue_signal, np.sqrt(blue_signal + blue_noise + np.square(readnoise)))
+        snr_blue = np.divide(blue_signal, np.sqrt(blue_signal + blue_noise + read_noise + dark_noise))
     if (channel == 'red') or (channel == 'both'):
-        snr_red = np.divide(red_signal, np.sqrt(red_signal + red_noise + np.square(readnoise)))    
+        snr_red = np.divide(red_signal, np.sqrt(red_signal + red_noise + read_noise + dark_noise))    
 
     # sigma
     if (channel == 'blue') or (channel == 'both'):
-        sigma_blue = np.sqrt(blue_signal + blue_noise + np.square(readnoise))
+        sigma_blue = np.sqrt(blue_signal + blue_noise + read_noise + dark_noise)
     if (channel == 'red') or (channel == 'both'):
-        sigma_red = np.sqrt(red_signal + red_noise + np.square(readnoise))    
+        sigma_red = np.sqrt(red_signal + red_noise + read_noise + dark_noise)    
 
     # error
     if (channel == 'blue') or (channel == 'both'):

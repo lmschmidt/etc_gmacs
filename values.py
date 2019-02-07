@@ -15,6 +15,7 @@ coating_efficiency = 0.8*0.98**14
 area = [222, 368]
 dld = [3.73, 1.4]
 rn_default = 2
+dc_rate = 3/3600  #e-/px/s at -100C
 bin_options_default_index = 3  # 1th index is 2nd cell,  ergo default is 2x2 binning
 coating_eff_red = 0.62
 coating_eff_blue = 0.60
