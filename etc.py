@@ -370,7 +370,7 @@ def recalculate(etcdict):
         blue_noise = np.multiply(counts_noise, blue_total_eff_noise)    
 
     if (channel == 'red') or (channel == 'both'):
-        red_total_eff_noise = np.multiply(np.multiply(red_dichro, red_grating), (red_ccd * np.square(mirror) * coating_eff_red))  # HERERHERAJLSKDFJLKJ
+        red_total_eff_noise = np.multiply(np.multiply(red_dichro, red_grating), (red_ccd * np.square(mirror) * coating_eff_red))
         red_noise = np.multiply(counts_noise, red_total_eff_noise)    
 
     # SNR
@@ -387,9 +387,9 @@ def recalculate(etcdict):
 
     # error
     if (channel == 'blue') or (channel == 'both'):
-        error_blue = np.random.normal(loc=0,  scale=sigma_blue, size=len(snr_blue))
+        error_blue = np.random.poisson(sigma_blue)
     if (channel == 'red') or (channel == 'both'):
-        error_red = np.random.normal(loc=0,  scale=sigma_red, size=len(snr_red))    
+        error_red = np.random.poisson(sigma_red)
     
 
     ''' pre-plotting '''
