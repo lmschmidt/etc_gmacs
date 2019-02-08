@@ -350,7 +350,7 @@ def recalculate(etcdict):
         read_noise = math.ceil((rn**2) * spectral_resolution * spatial_resolution / (bin_size**2))
         print('[ info ] : binned spectral pixels: {} px \n [ info ] : binned spatial pixels: {} px'.format(
               int(math.ceil(spectral_resolution/bin_size)), int(math.ceil(spatial_resolution/bin_size))))
-        message += '<br/> [ info ] : Extent: {} arcsec^2 <br/> [ info ] : num binned pixels/resel: {} px '.format(
+        message += '<br/> [ info ] : Extraction aperture is {} arcsec^2 <br/> [ info ] : {} binned pixels per resolution element'.format(
               round(extent,2), int(math.ceil(npix/(bin_size**2))))
     else:
         raise ValueError('{} Invalid pixel binning option ({})'.format(string_prefix, bin_size))    
