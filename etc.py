@@ -213,6 +213,8 @@ def recalculate(etcdict):
     ch = etcdict['widget_channels']
     channel =  'both' if len(ch) is 2 else 'red' if ch[0] == 1 else 'blue'
     
+    if galaxy_type == 'lbg_all_flam':
+        message += '<br/> <font color="red"><strong>[ warning ] : Due to template limitations, redshift has been set to minimum value of 3.</strong></font>'
     ''' input handling '''    
 
     if isinstance(object_type, str):
