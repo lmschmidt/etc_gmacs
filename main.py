@@ -120,7 +120,9 @@ def update_etc_inputs(attr, old, new):
 
     # force redshift of 3 for LBG due to template limitations
     if widget_galaxy_type.value == 'lbg_all_flam':
-        widget_redshift.value = 3
+        widget_redshift.start = 3
+        if widget_redshift.value < 3:
+            widget_redshift.value = 3
     
     # ensure that at least one channel is selected
     if not etc_inputs['widget_channels']:
