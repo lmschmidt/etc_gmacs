@@ -385,17 +385,11 @@ def recalculate(etcdict):
     if (channel == 'red') or (channel == 'both'):
         snr_red = np.divide(red_signal, np.sqrt(red_signal + red_noise + read_noise + dark_noise))    
 
-    # sigma
+     # error, leave out sky noise, apply Poisson noise to remaining signal
     if (channel == 'blue') or (channel == 'both'):
-        sigma_blue = np.sqrt(blue_signal + blue_noise + read_noise + dark_noise)
+        spectrum_poisson_blue = np.random.poisson(blue_signal + read_noise + dark_noise)
     if (channel == 'red') or (channel == 'both'):
-        sigma_red = np.sqrt(red_signal + red_noise + read_noise + dark_noise)    
-
-    # error
-    if (channel == 'blue') or (channel == 'both'):
-        error_blue = np.random.poisson(sigma_blue)
-    if (channel == 'red') or (channel == 'both'):
-        error_red = np.random.poisson(sigma_red)
+        spectrum_poisson_red = np.random.poisson(red_signal + read_noise + dark_noise)
     
 
     ''' pre-plotting '''
@@ -424,9 +418,9 @@ def recalculate(etcdict):
             title = stc.plot_labels[2][0]
             labels = [stc.plot_labels[2][1], stc.plot_labels[2][2]]
             if (channel == 'blue') or (channel == 'both'):
-                plot_y_blue = np.add(blue_signal, error_blue)
+                plot_y_blue = spectrum_poisson_blue 
             if (channel == 'red') or (channel == 'both'):
-                plot_y_red = np.add(red_signal, error_red)
+                plot_y_red = spectrum_poisson_red  
         elif (plot_typ == plot_typ_keys[3]):
             # Sky Background
             title = stc.plot_labels[3][0]
