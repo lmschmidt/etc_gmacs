@@ -50,7 +50,7 @@ widget_grating = RadioButtonGroup(labels=stc.grating_opts, active=0, name=stc.wi
 widget_moon_txt = Div(text="Days from new moon:")
 widget_moon = RadioButtonGroup(labels=stc.moon_opts, active=0, name=stc.widget_names[8])
 widget_bin_txt = Div(text="Pixel Binning:")
-widget_binning = RadioButtonGroup(labels=stc.bin_opts, active=1, name=stc.widget_names[9])
+widget_binning = RadioButtonGroup(labels=stc.bin_opts, active=3, name=stc.widget_names[9])
 widget_redshift = Slider(start=(0), end=(10), value=(0), step=(0.01), title=stc.widget_headers[10], name=stc.widget_names[10])
 widget_seeing = Slider(start=(0.25), end=(2.0), value=(0.65), step=(0.05), title=stc.widget_headers[11], name=stc.widget_names[11])
 widget_slit = Slider(start=(0.25), end=(2.0), value=(0.7), step=(0.05), title=stc.widget_headers[12], name=stc.widget_names[12])
