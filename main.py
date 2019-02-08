@@ -6,7 +6,7 @@ from bokeh.plotting import figure
 from bokeh.layouts import widgetbox, column, layout, gridplot  # , row
 from bokeh.models import ColumnDataSource, glyphs, Div
 from bokeh.io import curdoc
-from bokeh.models.widgets import Dropdown, RadioButtonGroup, CheckboxButtonGroup, Slider, RangeSlider, Div, Select, Button  # Tabs, Panel, Toggle
+from bokeh.models.widgets import Dropdown, RadioButtonGroup, CheckboxButtonGroup, Slider, RangeSlider, Div, Select, Button, TextInput  # Tabs, Panel, Toggle
 # from bokeh.embed import components  # for loading stuff,  todo
 
 # import slim as etslim  # reduced python package for gui versions
@@ -55,7 +55,7 @@ widget_redshift = Slider(start=(0), end=(10), value=(0), step=(0.01), title=stc.
 widget_seeing = Slider(start=(0.25), end=(2.0), value=(0.65), step=(0.05), title=stc.widget_headers[11], name=stc.widget_names[11])
 widget_slit = Slider(start=(0.25), end=(2.0), value=(0.7), step=(0.05), title=stc.widget_headers[12], name=stc.widget_names[12])
 widget_time_inc = RadioButtonGroup(labels=['h','m','s'], active=0, name=stc.widget_names[17])
-widget_time = Slider(start=(1), end=(100), value=(1), step=(0.05), title=stc.widget_headers[13], name=stc.widget_names[13])
+widget_time = TextInput(value=('1'), title=stc.widget_headers[13], name=stc.widget_names[13])
 widget_wavelength = RangeSlider(start=dfs.wavelength_limits[0],  end=dfs.wavelength_limits[1],
                                 value=((dfs.wavelength_limits[0]), (dfs.wavelength_limits[1])), step=(10), title=stc.widget_headers[14], name=stc.widget_names[14])
 widget_channels = CheckboxButtonGroup(labels=stc.channels,  active=[0, 1],  name=stc.widget_names[15])
@@ -104,19 +104,19 @@ def update_etc_inputs(attr, old, new):
     # set time label and ranges
     if etc_inputs['widget_time_inc'] == 0:
         widget_time.title = "Exposure Time [h]"
-        widget_time.start = 1
-        widget_time.end = 100
-        widget_time.step = 0.05
+        # widget_time.start = 1
+        # widget_time.end = 100
+        # widget_time.step = 0.05
     elif etc_inputs['widget_time_inc'] == 1:
         widget_time.title = "Exposure Time [m]"
-        widget_time.start = 1
-        widget_time.end = 60
-        widget_time.step = 1
+        # widget_time.start = 1
+        # widget_time.end = 60
+        # widget_time.step = 1
     elif etc_inputs['widget_time_inc'] == 2:
         widget_time.title = "Exposure Time [s]"
-        widget_time.start = 0.1
-        widget_time.end = 60
-        widget_time.step = 0.1
+        # widget_time.start = 0.1
+        # widget_time.end = 60
+        # widget_time.step = 0.1
 
     # force redshift of 3 for LBG due to template limitations
     if widget_galaxy_type.value == 'lbg_all_flam':

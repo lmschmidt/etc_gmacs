@@ -195,14 +195,23 @@ def recalculate(etcdict):
     moon_days = moon_days_keys[etcdict['widget_moon']]
     grating_opt = etcdict['widget_grating']
     telescope_mode = etcdict['widget_telescope']
-    if etcdict['widget_time_inc'] == 2:
+    
+    try:
         exp_time = float(etcdict['widget_time'])
-    elif etcdict['widget_time_inc'] == 1:
-        exp_time = float(etcdict['widget_time'])*60.0
-    else:
-        exp_time = float(etcdict['widget_time'])*3600.0
+        if exp_time < 0:
+            raise ValueError('Negative Exposure Time')
+        if etcdict['widget_time_inc'] == 2:
+            exp_time = float(etcdict['widget_time'])
+        elif etcdict['widget_time_inc'] == 1:
+            exp_time = float(etcdict['widget_time'])*60.0
+        else:
+            exp_time = float(etcdict['widget_time'])*3600.0
+        message += '<br/> [ info ] : Exposure Time : {} seconds'.format(round(exp_time,2))
+    except ValueError:
+        exp_time = 0
+        message += '<br/> <font color="red"><strong>[ warning ] : Please enter a positive number for exposure time.</strong></font>'
 
-    message += '<br/> [ info ] : Exposure Time : {} seconds'.format(round(exp_time,2))
+    
     plot_typ = etcdict['widget_plot']
     bin_size = etcdict['widget_binning'] + 1  # add one so that value is equal to number of pixels 
     if plot_typ is 'Observed Spectrum + Noise':
