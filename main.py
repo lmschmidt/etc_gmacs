@@ -64,7 +64,7 @@ widget_plot = Select(value=stc.plot_labels[0][0], title=stc.widget_headers[16], 
 
 widget_update = Button(label="Update", button_type="success")
 
-widget_text = Div(text="Choose input parameters and press the Update button.", width=1000, height=125)
+widget_text = Div(text="Choose input parameters and press the Update button. </br> Controls to Pan, Zoom, Save, or Reset the figure may be selected at the upper right corner of the figure.", width=1000, height=125)
 
 widget_header = Div(text='<h1>'+stc.header1+'</h1><h3>'+stc.header2+'</h3>'+'<hr/>', width=1000, height=100)
 widget_footer = Div(text='<hr/>'+'<p>'+stc.footer1+'</p><p>'+stc.footer2+'</p>', width=1000, height=100)
