@@ -123,7 +123,9 @@ def update_etc_inputs(attr, old, new):
         widget_redshift.start = 3
         if widget_redshift.value < 3:
             widget_redshift.value = 3
-    
+    else:
+        widget_redshift.start = 0
+            
     # ensure that at least one channel is selected
     if not etc_inputs['widget_channels']:
         widget_channels.active = [0,1]
