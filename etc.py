@@ -356,7 +356,7 @@ def recalculate(etcdict):
     rn = edl.rn_default  # in e-/px
     if (bin_size > 0) and (bin_size < 5):
         print('[ info ] : Pixel binning: ({}x{})'.format(bin_size, bin_size))
-        read_noise = math.ceil((rn**2) * spectral_resolution * spatial_resolution / (bin_size**2))
+        read_noise = math.ceil((rn**2) * spatial_resolution / bin_size)  # assume summed along spatial direction
         print('[ info ] : binned spectral pixels: {} px \n [ info ] : binned spatial pixels: {} px'.format(
               int(math.ceil(spectral_resolution/bin_size)), int(math.ceil(spatial_resolution/bin_size))))
         message += '<br/> [ info ] : Extraction aperture is {} arcsec^2 <br/> [ info ] : {} binned pixels per resolution element'.format(
@@ -365,7 +365,7 @@ def recalculate(etcdict):
         raise ValueError('{} Invalid pixel binning option ({})'.format(string_prefix, bin_size))    
 
     # Dark Current
-    dark_noise = npix * dcr * exp_time
+    dark_noise = npix * dcr * exp_time / (spectral_resolution / bin_size)  # total dark divided by spectral resolution element sampling
 
     extinction = spectres(wavelength, atmo_ext_x, atmo_ext_y)  # since not passed from function,  just use global in real version    
 
@@ -379,20 +379,20 @@ def recalculate(etcdict):
         red_total_eff = np.multiply(np.multiply(red_dichro, red_grating), np.multiply((red_ccd * (extinction * coating_eff_red)), np.square(mirror)))
         red_signal = np.multiply((counts * percent),  red_total_eff)    
 
-    # noise
+    # sky noise
     if (channel == 'blue') or (channel == 'both'):
-        blue_total_eff_noise = np.multiply(np.multiply(blue_dichro, blue_grating), (blue_ccd * np.square(mirror) * coating_eff_blue))
-        blue_noise = np.multiply(counts_noise, blue_total_eff_noise)    
+        blue_total_eff_sky = np.multiply(np.multiply(blue_dichro, blue_grating), (blue_ccd * np.square(mirror) * coating_eff_blue))
+        blue_sky = np.multiply(counts_noise, blue_total_eff_sky)    
 
     if (channel == 'red') or (channel == 'both'):
-        red_total_eff_noise = np.multiply(np.multiply(red_dichro, red_grating), (red_ccd * np.square(mirror) * coating_eff_red))
-        red_noise = np.multiply(counts_noise, red_total_eff_noise)    
+        red_total_eff_sky = np.multiply(np.multiply(red_dichro, red_grating), (red_ccd * np.square(mirror) * coating_eff_red))
+        red_sky = np.multiply(counts_noise, red_total_eff_sky)    
 
     # SNR
     if (channel == 'blue') or (channel == 'both'):
-        snr_blue = np.divide(blue_signal, np.sqrt(blue_signal + blue_noise + read_noise + dark_noise))
+        snr_blue = np.divide(blue_signal, np.sqrt(blue_signal + blue_sky + read_noise + dark_noise))
     if (channel == 'red') or (channel == 'both'):
-        snr_red = np.divide(red_signal, np.sqrt(red_signal + red_noise + read_noise + dark_noise))    
+        snr_red = np.divide(red_signal, np.sqrt(red_signal + red_sky + read_noise + dark_noise))    
 
      # error, leave out sky noise, apply Poisson noise to remaining signal
     if (channel == 'blue') or (channel == 'both'):
