@@ -243,9 +243,11 @@ def recalculate(etcdict):
     if object_type == 0:
         index_of = [i for i, name in enumerate(stellar_keys) if star_type in name][0]
         object_type = starfiles[index_of]
+        source = 'point'
     elif object_type == 1:
         index_of = [i for i, name in enumerate(galactic_keys) if galaxy_type in name][0]
         object_type = galaxyfiles[index_of]
+        source = 'resolved'
     else:
         raise ValueError("{} Invalid object type ({})".format(string_prefix, object_type))    
     
@@ -282,7 +284,8 @@ def recalculate(etcdict):
     if (old_res < plot_step):
         flux_y = spectres(wavelength, star_x, (star_y*1e-03))  # ergs s-1 cm-2 A-1 to J s-1 m-2 A-1
     else:
-        flux_y = spectres(wavelength, star_x, (star_y*1e-03))    
+        flux_y = spectres(wavelength, star_x, (star_y*1e-03))
+        message += '<br/> <font color="red"><strong>[ warning ] : Template resolution is less than instrument resolution.</strong></font>'
 
     flux = flux_y
     power = flux * area * exp_time * plot_step
@@ -291,22 +294,30 @@ def recalculate(etcdict):
 
     ''' subtract light lost to various components '''    
 
-    # seeing
-    _sigma = seeing / gaussian_sigma_to_fwhm
-    funx = lambda x: (1/(_sigma*np.sqrt(2*math.pi)))*np.exp(np.divide(np.negative(np.square(x)), (np.multiply(np.square(_sigma), 2))))
-    percent_u, percent_err_u = integrate.quad(funx, (-slit_size/2), (slit_size/2))
-    percent_l, percent_err_l = integrate.quad(funx, (-seeing/2), (seeing/2))
-    percent = percent_u * percent_l  # can use error if you add it later...
+    # seeing & slit losses
+
+    if source == 'resolved':
+        slit_trans = 1.0
+        message += '<br/> [ info ] : Slit transmission factor is 1.0'
+    elif source == 'point':
+        slit_trans = math.erf((slit_size/2) / (math.sqrt(2) * seeing/2.35482))
+        message += '<br/> [ info ] : Slit transmission factor is {} '.format(round(slit_trans,3))
+
+    #_sigma = seeing / gaussian_sigma_to_fwhm
+    #funx = lambda x: (1/(_sigma*np.sqrt(2*math.pi)))*np.exp(np.divide(np.negative(np.square(x)), (np.multiply(np.square(_sigma), 2))))
+    #percent_u, percent_err_u = integrate.quad(funx, (-slit_size/2), (slit_size/2))
+    #percent_l, percent_err_l = integrate.quad(funx, (-seeing/2), (seeing/2))
+    #percent = percent_u * percent_l  # can use error if you add it later...
     extension = seeing * slit_size    
 
     # sky background
     sky_x = sky_background[0] * 1e4
     sky_y = sky_background[1] / 1e4
-    old_res = sky_x[2] - sky_x[1]
-    _sigma = delta_lambda / gaussian_sigma_to_fwhm
-    _x = np.arange((-5*_sigma), (5*_sigma), old_res)
-    degrade = funx(_x)/np.trapz(funx(_x))
-    sky_y = convolve_fft(sky_y, degrade)
+    #old_res = sky_x[2] - sky_x[1]
+    #_sigma = delta_lambda / gaussian_sigma_to_fwhm
+    #_x = np.arange((-5*_sigma), (5*_sigma), old_res)
+    #degrade = funx(_x)/np.trapz(funx(_x))
+    #sky_y = convolve_fft(sky_y, degrade)
     sky_flux = spectres(wavelength, sky_x, sky_y)
     counts_noise = np.multiply(np.multiply(sky_flux, extension), (area*exp_time*plot_step))    
 
@@ -374,10 +385,10 @@ def recalculate(etcdict):
     # signal
     if (channel == 'blue') or (channel == 'both'):
         blue_total_eff = np.multiply(np.multiply(blue_dichro, blue_grating), np.multiply((blue_ccd * (coating_eff_blue * extinction)), np.square(mirror)))
-        blue_signal = np.multiply((counts * percent),  blue_total_eff)
+        blue_signal = np.multiply((counts * slit_trans),  blue_total_eff)
     if (channel == 'red') or (channel == 'both'):
         red_total_eff = np.multiply(np.multiply(red_dichro, red_grating), np.multiply((red_ccd * (extinction * coating_eff_red)), np.square(mirror)))
-        red_signal = np.multiply((counts * percent),  red_total_eff)    
+        red_signal = np.multiply((counts * slit_trans),  red_total_eff)    
 
     # sky noise
     if (channel == 'blue') or (channel == 'both'):
