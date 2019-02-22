@@ -303,21 +303,13 @@ def recalculate(etcdict):
         slit_trans = math.erf((slit_size/2) / (math.sqrt(2) * seeing/2.35482))
         message += '<br/> [ info ] : Slit transmission factor is {} '.format(round(slit_trans,3))
 
-    #_sigma = seeing / gaussian_sigma_to_fwhm
-    #funx = lambda x: (1/(_sigma*np.sqrt(2*math.pi)))*np.exp(np.divide(np.negative(np.square(x)), (np.multiply(np.square(_sigma), 2))))
-    #percent_u, percent_err_u = integrate.quad(funx, (-slit_size/2), (slit_size/2))
-    #percent_l, percent_err_l = integrate.quad(funx, (-seeing/2), (seeing/2))
-    #percent = percent_u * percent_l  # can use error if you add it later...
+    # Determine arcsec^2 for total sky flux
     extension = seeing * slit_size    
 
-    # sky background
-    sky_x = sky_background[0] * 1e4
-    sky_y = sky_background[1] / 1e4
-    #old_res = sky_x[2] - sky_x[1]
-    #_sigma = delta_lambda / gaussian_sigma_to_fwhm
-    #_x = np.arange((-5*_sigma), (5*_sigma), old_res)
-    #degrade = funx(_x)/np.trapz(funx(_x))
-    #sky_y = convolve_fft(sky_y, degrade)
+    # sky background - units of microns and photons/s/m^2/micron/arcsec^2
+    sky_x = sky_background[0] * 1e4  # convert wavelength units from micron to angstrom
+    sky_y = sky_background[1] / 1e4  # convert flux units from /micron to /angstrom
+    # Rebin sky flux to match instrument sampling
     sky_flux = spectres(wavelength, sky_x, sky_y)
     counts_noise = np.multiply(np.multiply(sky_flux, extension), (area*exp_time*plot_step))    
 
@@ -378,7 +370,8 @@ def recalculate(etcdict):
     # Dark Current
     dark_noise = npix * dcr * exp_time / (spectral_resolution / bin_size)  # total dark divided by spectral resolution element sampling
 
-    extinction = spectres(wavelength, atmo_ext_x, atmo_ext_y)  # since not passed from function,  just use global in real version    
+    # Atmospheric Losses
+    extinction = spectres(wavelength, atmo_ext_x, atmo_ext_y)
 
     ''' calculations '''    
 
