@@ -439,9 +439,9 @@ def recalculate(etcdict):
             title = stc.plot_labels[3][0]
             labels = [stc.plot_labels[3][1], stc.plot_labels[3][2]]
             if (channel == 'blue') or (channel == 'both'):
-                plot_y_blue = blue_noise
+                plot_y_blue = blue_sky
             if (channel == 'red') or (channel == 'both'):
-                plot_y_red = red_noise
+                plot_y_red = red_sky
         elif (plot_typ == plot_typ_keys[4]):
             # Dichroic
             title = stc.plot_labels[4][0]
