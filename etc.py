@@ -263,7 +263,6 @@ def recalculate(etcdict):
     # set wavelength step size to wavelengths sampled by one binned pixel
     wavelength = np.arange(etcdict['widget_wavelength'][0], etcdict['widget_wavelength'][1], (delta_lambda_default * bin_size / edl.reselpx))
 
-    plot_step = wavelength[2] - wavelength[1]
     # picks up either unit
     if ((wavelength[0] > (3200 - plot_step)) and (wavelength[-1] < (10360 + plot_step))) or ((wavelength[0] > (320 - plot_step)) and (wavelength[-1] < (1036 + plot_step))):
         plot_step = wavelength[2] - wavelength[1]
