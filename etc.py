@@ -55,7 +55,7 @@ plot_typ = 'snr'  # options are 'snr', 'obv_spec', 'sky_background', 'dichroic_t
 noise = False
 wavelength = np.arange(3200, 10360, edl.dld[0]/6.)
 channel = 'both'
-dcr = edl.dc_rate
+dcr = edl.dc_rate  # dark current rate
 
 string_prefix = '[ etc ] :'
 coating_eff_red = 0.62
@@ -71,7 +71,7 @@ filter_dict = dict((v,k) for k, v in dict(enumerate(edl.filter_files)).items()) 
 
 testvalues = {'widget_telescope': True, 'widget_object_type': 0, 'widget_star_type': 'a5v', 'widget_galaxy_type': 'SB1', 'widget_mag_sys': 1,
               'widget_mag': 25, 'widget_filter': 'r.dat', 'widget_grating': 0, 'widget_moon': 0, 'widget_binning': 1, 'widget_redshift': 0,
-              'widget_seeing': 0.65, 'widget_slit': 0.7, 'widget_time': 2600, 'widget_time_inc': 's', 'widget_wavelength': (3200, 10360), 'widget_channels': [0, 1],
+              'widget_seeing': 0.65, 'widget_slit': edl.slit_default, 'widget_time': 2600, 'widget_time_inc': 's', 'widget_wavelength': (3200, 10360), 'widget_channels': [0, 1],
               'widget_plot': 'Observed Spectrum + Noise'}
 
 def mag_cal(wavelength, selected_filter, mag_sys_opt, object_type, redshift, mag):
@@ -259,9 +259,9 @@ def recalculate(etcdict):
         raise ValueError("{} Invalid grating option ({})".format(string_prefix, grating_opt))    
 
     # set resolution element in Angstroms
-    delta_lambda = delta_lambda_default * slit_size / 0.7    
+    delta_lambda = delta_lambda_default * slit_size / edl.slit_default   
     # set wavelength step size to wavelengths sampled by one binned pixel
-    wavelength = np.arange(etcdict['widget_wavelength'][0], etcdict['widget_wavelength'][1], (delta_lambda_default * bin_size / 12.))
+    wavelength = np.arange(etcdict['widget_wavelength'][0], etcdict['widget_wavelength'][1], (delta_lambda_default * bin_size / edl.reselpx))
 
     plot_step = wavelength[2] - wavelength[1]
     # picks up either unit
@@ -347,8 +347,8 @@ def recalculate(etcdict):
     mirror = fmirror(wavelength)  # spectres(wavelength, mirror_file_x, mirror_file_y)    
 
     # read noise
-    spectral_resolution = math.ceil((slit_size/(0.7/12))/2)*2  # px (ceil()/2)*2 to round up to next even integer
-    spatial_resolution = math.ceil((seeing/(0.7/12))/2)*2  # px (ceil()/2)*2 to round up to next even integer
+    spectral_resolution = math.ceil((slit_size/(edl.slit_default/edl.reselpx))/2)*2  # px (ceil()/2)*2 to round up to next even integer
+    spatial_resolution = math.ceil((seeing/(edl.slit_default/edl.reselpx))/2)*2  # px (ceil()/2)*2 to round up to next even integer
     extent = seeing * slit_size
     npix = spectral_resolution * spatial_resolution
     try:
