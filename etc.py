@@ -359,7 +359,7 @@ def recalculate(etcdict):
     rn = edl.rn_default  # in e-/px
     if (bin_size > 0) and (bin_size < 5):
         print('[ info ] : Pixel binning: ({}x{})'.format(bin_size, bin_size))
-        read_noise = math.ceil((rn**2) * spatial_resolution / bin_size)  # assume summed along spatial direction
+        read_noise = math.ceil((rn**2) * npix / bin_size**2)  
         print('[ info ] : binned spectral pixels: {} px \n [ info ] : binned spatial pixels: {} px'.format(
               int(math.ceil(spectral_resolution/bin_size)), int(math.ceil(spatial_resolution/bin_size))))
         message += '<br/> [ info ] : Extraction aperture is {} arcsec^2 <br/> [ info ] : {} binned pixels per resolution element'.format(
@@ -368,7 +368,7 @@ def recalculate(etcdict):
         raise ValueError('{} Invalid pixel binning option ({})'.format(string_prefix, bin_size))    
 
     # Dark Current
-    dark_noise = npix * dcr * exp_time / (spectral_resolution / bin_size)  # total dark divided by spectral resolution element sampling
+    dark_noise = npix * dcr * exp_time # / (spectral_resolution / bin_size)  # total dark divided by spectral resolution element sampling
 
     # Atmospheric Losses
     extinction = spectres(wavelength, atmo_ext_x, atmo_ext_y)
