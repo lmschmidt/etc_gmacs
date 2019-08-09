@@ -261,7 +261,12 @@ def recalculate(etcdict):
     # set resolution element in Angstroms
     delta_lambda = delta_lambda_default * slit_size / edl.slit_default   
     # set wavelength step size to wavelengths sampled by one binned pixel
-    wavelength = np.arange(etcdict['widget_wavelength'][0], etcdict['widget_wavelength'][1], (delta_lambda_default * bin_size / edl.reselpx))
+    if (bin_size > 0) and (bin_size < 5):
+        wavelength = np.arange(etcdict['widget_wavelength'][0], etcdict['widget_wavelength'][1], (delta_lambda_default * bin_size / edl.reselpx))
+    elif bin_size == 5:
+        wavelength = np.arange(etcdict['widget_wavelength'][0], etcdict['widget_wavelength'][1], (delta_lambda_default * 0.5))
+    elif bin_size == 6:
+        wavelength = np.arange(etcdict['widget_wavelength'][0], etcdict['widget_wavelength'][1], (delta_lambda_default))
 
     plot_step = wavelength[2] - wavelength[1]
     # picks up either unit
