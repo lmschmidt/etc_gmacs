@@ -1,6 +1,7 @@
 # from os.path import dirname,  join
 
 # import numpy as np
+import pandas as pd
 
 from bokeh.plotting import figure
 from bokeh.layouts import widgetbox, column, layout, gridplot  # , row
