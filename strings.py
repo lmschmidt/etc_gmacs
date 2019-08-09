@@ -52,7 +52,7 @@ widget_names = ['widget_telescope',
 telescope_sizes = ["First light", "Full Size"]
 object_types = ["Stellar", "Galactic"]
 
-header1 = 'GMACS : Exposure Time Calculator v2.0'
+header1 = 'GMACS : Exposure Time Calculator v2.0 f/1.6 camera'
 header2 = 'Munnerlyn Astronomical Instrumentation Lab'
 footer1 = '<a href='+str(etpaths.doc_path)+'>README</a>'
 footer2 = '''Send questions or bug reports to <a href='&#109;&#97;i&#108;to&#58;%6Cs&#99;h%6Di&#100;t&#64;ph%&#55;9&#115;%&#54;9&#99;&#115;&#46;%74amu&#46;%65du'>lsch&#109;idt&#64;p&#104;y&#115;ics&#46;t&#97;m&#117;&#46;&#101;du</a>.'''
