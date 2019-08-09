@@ -146,6 +146,11 @@ def update_figure():
     wavelength, plot_y_red, plot_y_blue, labels, title, messages = etcalc.recalculate(etc_inputs)
     print(labels, title, messages)
     widget_text.update(text='Plotting: ' + title + messages)
+
+    # output results to a csv
+    data_save = {'Wavelength': wavelength, 'y-red': plot_y_red, 'y-blue': plot_y_blue}
+    df = pd.DataFrame(data=data_save)
+    df.to_csv('plot_output.csv', index=False)
     
     # plot_x, plot_yb, plot_yr = sess.update(caller)
     if (etc_inputs['widget_channels'] == [0]):
