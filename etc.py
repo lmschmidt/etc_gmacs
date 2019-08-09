@@ -364,6 +364,18 @@ def recalculate(etcdict):
               int(math.ceil(spectral_resolution/bin_size)), int(math.ceil(spatial_resolution/bin_size))))
         message += '<br/> [ info ] : Extraction aperture is {} arcsec^2 <br/> [ info ] : {} binned pixels per resolution element'.format(
               round(extent,2), int(math.ceil(npix/(bin_size**2))))
+    elif bin_size == 5:  # Nyquist sampling
+        print('[ info ] : Pixel binning: ({}x{})'.format(spatial_resolution, spectral_resolution/2.))
+        read_noise = (rn**2) * 2  # assume binned to two pixels  
+        print('[ info ] : binned spectral pixels: 2 px \n [ info ] : binned spatial pixels: 1 px')
+        message += '<br/> [ info ] : Extraction aperture is {} arcsec^2 <br/> [ info ] : 2 binned pixels per resolution element'.format(
+              round(extent,2))
+    elif bin_size == 6:  # binned to 1 resel
+        print('[ info ] : Pixel binning: ({}x{})'.format(spatial_resolution, spectral_resolution))
+        read_noise = (rn**2) * 1  # assume binned to one pixel  
+        print('[ info ] : binned spectral pixels: 1 px \n [ info ] : binned spatial pixels: 1 px')
+        message += '<br/> [ info ] : Extraction aperture is {} arcsec^2 <br/> [ info ] : 1 binned pixel per resolution element'.format(
+              round(extent,2))
     else:
         raise ValueError('{} Invalid pixel binning option ({})'.format(string_prefix, bin_size))    
 
