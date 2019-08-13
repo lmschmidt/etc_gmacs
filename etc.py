@@ -352,8 +352,8 @@ def recalculate(etcdict):
     mirror = fmirror(wavelength)  # spectres(wavelength, mirror_file_x, mirror_file_y)    
 
     # read noise
-    spectral_resolution = math.ceil((slit_size/(edl.slit_default/edl.reselpx))/2)*2  # px (ceil()/2)*2 to round up to next even integer
-    spatial_resolution = math.ceil((seeing/(edl.slit_default/edl.reselpx))/2)*2  # px (ceil()/2)*2 to round up to next even integer
+    spectral_resolution = math.ceil(slit_size/(edl.slit_default/edl.reselpx))  
+    spatial_resolution = math.ceil(seeing/(edl.slit_default/edl.reselpx))  
     extent = seeing * slit_size
     npix = spectral_resolution * spatial_resolution
     try:
