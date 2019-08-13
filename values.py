@@ -17,10 +17,10 @@ dld = [3.73, 1.4]
 rn_default = 2
 dc_rate = 0.02/3600  #e-/px/s at -120C
 bin_options_default_index = 3  # 1th index is 2nd cell,  ergo default is 4x4 binning
-reselpx = 9  # number of pixels in a resolution element
+reselpx = 8.96  # number of pixels in a resolution element
 slit_default = 0.7  # default slit size in arcsec
-coating_eff_red = 0.62
-coating_eff_blue = 0.60
+coating_eff_red = 0.63
+coating_eff_blue = 0.59
 bin_options_int = [1, 2, 3, 4]
 bin_options_str = ['1x1', '2x2', '3x3', '4x4']
 
