@@ -351,41 +351,49 @@ def recalculate(etcdict):
     fmirror = interpolate.interp1d(mirror_file_x, mirror_file_y,  kind='cubic')
     mirror = fmirror(wavelength)  # spectres(wavelength, mirror_file_x, mirror_file_y)    
 
-    # read noise
-    spectral_resolution = math.ceil(slit_size/(edl.slit_default/edl.reselpx))  
-    spatial_resolution = math.ceil(seeing/(edl.slit_default/edl.reselpx))  
-    extent = seeing * slit_size
-    npix = spectral_resolution * spatial_resolution
+    # read noise & binning
     try:
         isinstance(bin_size, int)
     except:
-        bin_size = edl.bin_options_int[edl.bin_options_default_index]  # default 2x2 binning    
+        bin_size = edl.bin_options_int[edl.bin_options_default_index]  # default 2x2 binning   
 
+    spectral_px = math.ceil(slit_size/(edl.slit_default/edl.reselpx))  # pixels per slit
+    spatial_px = math.ceil(seeing/(edl.slit_default/edl.reselpx))  # pixels per seeing fwhm
+    
+    spectral_supx = math.ceil(spectral_px/bin_size)  # spectral super pixels after binning
+    spatial_supx = math.ceil(spatial_px/bin_size)  # spatial super pixels after binning
+    
+    extent = slit_size * spatial_supx*bin_size*edl.reselpx/edl.slit_default  # sky area in arcsec**2, mask blocks extra sky in spectral direction from binning, but not spatial direction.
+
+    npix = spectral_px * spatial_px  # number of pixels
+    nsuppx = spectral_supx*spatial_supx  # number of superpixels
+     
     rn = edl.rn_default  # in e-/px
+    
     if (bin_size > 0) and (bin_size < 5):
         print('[ info ] : Pixel binning: ({}x{})'.format(bin_size, bin_size))
-        read_noise = math.ceil((rn**2) * npix / bin_size**2)  
-        print('[ info ] : binned spectral pixels: {} px \n [ info ] : binned spatial pixels: {} px'.format(
-              int(math.ceil(spectral_resolution/bin_size)), int(math.ceil(spatial_resolution/bin_size))))
-        message += '<br/> [ info ] : Extraction aperture is {} arcsec^2 <br/> [ info ] : {} binned pixels per resolution element'.format(
-              round(extent,2), int(math.ceil(npix/(bin_size**2))))
+        read_noise = (rn**2) * nsuppx  
+        print('[ info ] : spectral superpixels: {} px \n [ info ] : spatial superpixels: {} px'.format(
+              spectral_supx, spatial_supx))
+        message += '<br/> [ info ] : Extraction aperture is {} arcsec^2 <br/> [ info ] : {} superpixels per resolution element'.format(
+              round(extent,2), nsuppx)
     elif bin_size == 5:  # Nyquist sampling
-        print('[ info ] : Pixel binning: ({}x{})'.format(spatial_resolution, spectral_resolution/2.))
+        print('[ info ] : Pixel binning: ({}x{})'.format(spatial_px, spectral_px/2.))
         read_noise = (rn**2) * 2  # assume binned to two pixels  
-        print('[ info ] : binned spectral pixels: 2 px \n [ info ] : binned spatial pixels: 1 px')
-        message += '<br/> [ info ] : Extraction aperture is {} arcsec^2 <br/> [ info ] : 2 binned pixels per resolution element'.format(
+        print('[ info ] : spectral superpixels: 2 px \n [ info ] : spatial superpixels: 1 px')
+        message += '<br/> [ info ] : Extraction aperture is {} arcsec^2 <br/> [ info ] : 2 superpixels per resolution element'.format(
               round(extent,2))
     elif bin_size == 6:  # binned to 1 resel
-        print('[ info ] : Pixel binning: ({}x{})'.format(spatial_resolution, spectral_resolution))
+        print('[ info ] : Pixel binning: ({}x{})'.format(spatial_px, spectral_px))
         read_noise = (rn**2) * 1  # assume binned to one pixel  
-        print('[ info ] : binned spectral pixels: 1 px \n [ info ] : binned spatial pixels: 1 px')
-        message += '<br/> [ info ] : Extraction aperture is {} arcsec^2 <br/> [ info ] : 1 binned pixel per resolution element'.format(
+        print('[ info ] : spectral superpixels: 1 px \n [ info ] : spatial superpixels: 1 px')
+        message += '<br/> [ info ] : Extraction aperture is {} arcsec^2 <br/> [ info ] : 1 superpixel per resolution element'.format(
               round(extent,2))
     else:
         raise ValueError('{} Invalid pixel binning option ({})'.format(string_prefix, bin_size))    
 
     # Dark Current
-    dark_noise = npix * dcr * exp_time # / (spectral_resolution / bin_size)  # total dark divided by spectral resolution element sampling
+    dark_noise = npix * dcr * exp_time # / (spectral_px / bin_size)  # total dark divided by spectral resolution element sampling
 
     # Atmospheric Losses
     extinction = spectres(wavelength, atmo_ext_x, atmo_ext_y)
