@@ -45,7 +45,7 @@ widget_star_type = Select(value=stc.star_types_tup[4][0], title=stc.widget_heade
 widget_galaxy_type = Select(value=stc.galaxy_types_tup[0][0], title=stc.widget_headers[3], options=stc.galaxy_types_tup, name=stc.widget_names[3])
 widget_galaxy_type.disabled = True  # disable on startup
 widget_mag_sys = RadioButtonGroup(labels=stc.mag_sys_opts, active=1, name=stc.widget_names[4])
-widget_mag = Slider(start=(0), end=(30), value=(25), step=(0.1), title=stc.widget_headers[5], name=stc.widget_names[5],  callback_policy="mouseup")
+widget_mag = Slider(start=(0), end=(30), value=(25), step=(0.1), title=stc.widget_headers[5], name=stc.widget_names[5])
 widget_filter = Select(value=stc.filters_tup[7][0], title=stc.widget_headers[6], options=stc.filters_tup, name=stc.widget_names[6])
 widget_grating = RadioButtonGroup(labels=stc.grating_opts, active=0, name=stc.widget_names[7])
 widget_moon_txt = Div(text="Days from new moon:")
