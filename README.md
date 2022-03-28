@@ -6,19 +6,13 @@ This version is written for Python 3.7 and uses [Bokeh](https://bokeh.pydata.org
 
 Packages required (use pip install if not already installed):
 
-bokeh
-
-astropy
-
-pandas
-
-pathlib
-
-spectres
-
-matplotlib
-
-scipy
+bokeh  
+astropy  
+pandas  
+pathlib  
+spectres  
+matplotlib  
+scipy  
 
 To RUN:
 
