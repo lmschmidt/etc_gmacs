@@ -19,7 +19,7 @@ To RUN:
 1.  After cloning the repository you should have a folder called etc_gmacs.  
 2.  Open up a command prompt (this was developed in Windows using Anaconda, so open an Anaconda prompt, will likely work in linux as well, but have not tested).
 3.  Navigate to one level above etc_gmacs (for example if the project folder is located at /Documents/etc_gmacs, run the following command from the /Documents folder)
-4.  run bokeh serve etc_gmacs
+4.  bokeh serve etc_gmacs
 5.  You should see some messages about starting the server, then you can use your web browser to navigate to the given address (probably something like http://localhost:5006/etc_gmacs)
 6.  ETC should be ready to use!
 
