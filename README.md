@@ -4,20 +4,23 @@ etc_gmacs is an update to the original GMACS exposure time calculator.  The orig
 
 This version is written for Python 3.7 and uses [Bokeh](https://bokeh.pydata.org/en/latest/) to generate the etc input widgets and interactive plot.
 
-## Start Bokeh Server
-The Bokeh server runs on the webserver and is visible from the localhost.  A reverse proxy forwards external requests to the local host to make the server visible to the outside world.  To start the ETC, in a ssh session run the following command:
-```
-nohup bokeh serve etc_gmacs --port 5100 --allow-websocket-origin=instrumentation.tamu.edu &
-```
-https://superuser.com/questions/448445/run-bash-script-in-background-and-exit-terminal
+Packages required (use pip install if not already installed):
 
-## Stop Bokeh Server
-To stop the server in order to update, ssh to the webserver and traverse to the etc_gmacs folder. Run the following
-```
-ps -e | grep bokeh
-```
-This will list the PID of the server process which you can then kill, 
-```
-kill xxxxxx
-```
-Where xxxxxx is the PID.
+bokeh
+astropy
+pandas
+pathlib
+spectres
+matplotlib
+scipy
+
+To RUN:
+
+1.  After cloning the repository you should have a folder called etc_gmacs.  
+2.  Open up a command prompt (this was developed in Windows using Anaconda, so open an Anaconda prompt, will likely work in linux as well, but have not tested).
+3.  Navigate to one level above etc_gmacs (for example if the project folder is located at /Documents/etc_gmacs, run the following command from the /Documents folder)
+4.  run bokeh serve etc_gmacs
+5.  You should see some messages about starting the server, then you can use your web browser to navigate to the given address (probably something like http://localhost:5006/etc_gmacs)
+6.  ETC should be ready to use!
+
+In typical fashion, this was coded quickly, so there are possibly things that don't quite work right, code that is hard to follow, etc. If you notice any errors, please contact me.
